@@ -5,7 +5,36 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
+    groups:
+      # Patch and minor bumps are almost always safe and arrive constantly;
+      # batching them keeps the PR queue reviewable instead of noisy. Major
+      # bumps stay separate so each gets its own review.
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # The backend adapters pin SDK versions deliberately: an SP1 or RISC Zero
+      # bump is an integration project, not a dependency update. It changes the
+      # documented compatibility matrix, can alter proof formats, and needs the
+      # vendor toolchain to validate. Track upstream releases manually via the
+      # scheduled backend workflow.
+      - dependency-name: sp1-sdk
+      - dependency-name: risc0-zkvm
+
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
+    groups:
+      actions:
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # `dtolnay/rust-toolchain@1.85` is NOT an action version: the ref IS our
+      # declared MSRV, and it must match `rust-version` in Cargo.toml.
+      # Dependabot reads it as a version tag and proposes bumps like 1.120,
+      # which would silently delete the MSRV check while leaving the job green.
+      # Raising the MSRV is a semver-relevant decision made by hand.
+      - dependency-name: dtolnay/rust-toolchain

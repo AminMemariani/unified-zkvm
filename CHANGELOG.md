@@ -8,6 +8,24 @@ as qualified in [docs/versioning.md](docs/versioning.md).
 
 ## [Unreleased]
 
+### Changed
+
+- `syn` 2.0 -> 3.0 and `criterion` 0.5 -> 0.8 (Dependabot #3, #4). The proc-macro
+  builds unchanged on `syn` 3.0; benchmarks migrated from the now-deprecated
+  `criterion::black_box` to `std::hint::black_box`.
+- `actions/checkout` v4 -> v7 in CI (Dependabot #2).
+
+### Fixed
+
+- Dependabot no longer proposes bumps to `dtolnay/rust-toolchain@1.85`. That ref
+  is our declared MSRV, not an action version; Dependabot #1 proposed `1.120`,
+  which would have silently removed MSRV coverage while leaving the job green.
+  Raising the MSRV is a semver-relevant decision and is now made by hand.
+- Dependabot no longer proposes `sp1-sdk` or `risc0-zkvm` bumps. A backend SDK
+  upgrade changes the documented compatibility matrix and needs the vendor
+  toolchain to validate, so it is an integration task rather than a dependency
+  update.
+
 ## [0.1.0] - 2026-09-20
 
 ### Added

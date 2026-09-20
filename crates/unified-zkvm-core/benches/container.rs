@@ -9,7 +9,8 @@
 //! should stay negligible relative to proving, and this bench exists to notice
 //! if it ever stops being negligible.
 
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
+use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
+use std::hint::black_box;
 use unified_zkvm_core::{
     container, BackendId, ProgramId, ProofKind, ProofMetadata, PublicValues, ZkProof,
 };
