@@ -1,0 +1,21 @@
+[package]
+name = "xtask"
+description = "Internal task runner for the unified-zkvm workspace. Not published."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+anyhow = { workspace = true }
+unified-zkvm-core = { workspace = true, features = ["std"] }
+unified-zkvm-host = { workspace = true }
+unified-zkvm-mock = { workspace = true }
+
+[features]
+default = []
+# Present so `cfg!(feature = ..)` in the portability report is a real, honest
+# check rather than an always-false unexpected-cfg.
+sp1 = []
+risc0 = []

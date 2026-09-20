@@ -1,0 +1,27 @@
+name: Feature request
+description: Suggest a capability or API change.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: portability
+    attributes:
+      label: Portability impact
+      description: Can every supported backend implement this, or is it backend specific?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

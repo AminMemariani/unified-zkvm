@@ -1,0 +1,43 @@
+[package]
+name = "unified-zkvm-core"
+description = "Backend-neutral core types for unified-zkvm: capabilities, proofs, program identity and canonical serialization."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+readme = "README.md"
+
+[dependencies]
+serde = { workspace = true }
+postcard = { workspace = true }
+bitflags = { workspace = true, features = ["serde"] }
+sha2 = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }
+hex = { workspace = true, default-features = false, features = ["alloc"] }
+criterion = { workspace = true }
+
+# Benchmarks measure the abstraction layer only — never proving time.
+[[bench]]
+name = "serialization"
+harness = false
+
+[[bench]]
+name = "container"
+harness = false
+
+[features]
+default = ["std"]
+# Enables `std::error::Error` impls, `std::io` helpers and filesystem artifact
+# persistence. Without it the crate is `no_std + alloc`.
+std = ["serde/std", "postcard/use-std", "sha2/std"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

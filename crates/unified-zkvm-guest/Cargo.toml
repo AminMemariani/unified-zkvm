@@ -1,0 +1,45 @@
+[package]
+name = "unified-zkvm-guest"
+description = "Backend-neutral guest I/O and crypto API for unified-zkvm zkVM programs."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+# NOTE: this crate must stay free of host-side dependencies. No tokio, no
+# reqwest, no filesystem clients — a guest program links this and every byte
+# costs proving cycles. See docs/guest-guide.md.
+[dependencies]
+unified-zkvm-core = { workspace = true, default-features = false }
+serde = { workspace = true }
+postcard = { workspace = true }
+
+[features]
+default = ["std"]
+std = ["unified-zkvm-core/std", "serde/std", "postcard/use-std"]
+
+# Exactly one backend runtime may be selected. With none, the crate compiles
+# against the host-test runtime, which is what makes guest business logic
+# unit-testable with plain `cargo test`.
+sp1 = ["dep:sp1-zkvm"]
+risc0 = ["dep:risc0-zkvm"]
+
+[dependencies.sp1-zkvm]
+version = "6.8.0"
+optional = true
+
+[dependencies.risc0-zkvm]
+version = "3.0.6"
+default-features = false
+optional = true
+
+[package.metadata.docs.rs]
+# Backend runtimes require vendor toolchains that docs.rs does not have, so the
+# documented build is the portable one.
+no-default-features = false
+rustdoc-args = ["--cfg", "docsrs"]

@@ -1,0 +1,21 @@
+name: Documentation issue
+description: Something in the docs is wrong, missing, or unclear.
+labels: [documentation]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Where?
+      description: Page URL, file path, or rustdoc item.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested wording

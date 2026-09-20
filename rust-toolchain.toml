@@ -1,0 +1,14 @@
+[toolchain]
+# The workspace core (core/guest/host/macros/mock/facade) targets stable Rust and
+# declares an MSRV of 1.85 in Cargo.toml. This pin is only the *development*
+# toolchain: it is deliberately newer than the MSRV so that OpenVM (MSRV 1.91.1)
+# can be evaluated without a second rustup install.
+#
+# Backend guest programs require vendor toolchains that are NOT installed by
+# rustup and are NOT pinned here:
+#   SP1       -> `sp1up`  (installs the `succinct` toolchain)
+#   RISC Zero -> `rzup`   (installs the `risc0` toolchain)
+# See docs/troubleshooting.md.
+channel = "stable"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

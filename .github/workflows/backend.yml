@@ -1,0 +1,33 @@
+# Backend adapter CI.
+#
+# crates/unified-zkvm-sp1 and crates/unified-zkvm-risc0 are deliberately EXCLUDED
+# from the default workspace: they pull in very large proving SDKs and require
+# vendor toolchains (sp1up / rzup). They are therefore never built via
+# `--all-features` on the workspace; they get their own jobs here instead.
+#
+# These jobs only type-check the adapters. Real proving tests need the vendor
+# toolchains, which are not installed in CI.
+name: Backends
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    name: check ${{ matrix.backend }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [sp1, risc0]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo check --all-targets
+        working-directory: crates/unified-zkvm-${{ matrix.backend }}
