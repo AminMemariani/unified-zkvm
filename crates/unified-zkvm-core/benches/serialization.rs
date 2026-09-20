@@ -9,8 +9,9 @@
 //! minutes. The reason to track them at all is to catch a regression that would
 //! make the abstraction itself a bottleneck - not to compare backends.
 
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
+use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use serde::{Deserialize, Serialize};
+use std::hint::black_box;
 use unified_zkvm_core::{crypto::sha256, ZkMessage};
 
 /// A nested payload with the shapes that stress a codec: fixed array, variable
