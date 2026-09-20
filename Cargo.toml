@@ -54,7 +54,7 @@ tracing = { version = "0.1.41", default-features = false }
 # dev / tooling
 proptest = "1.7.0"
 hex = { version = "0.4.3", default-features = false, features = ["alloc"] }
-criterion = "0.5.1"
+criterion = "0.8.2"
 anyhow = "1.0.99"
 
 [profile.release]
