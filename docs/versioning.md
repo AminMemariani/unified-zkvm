@@ -32,7 +32,7 @@ explicitly handled.
 
 ### 3. Verification semantics
 
-Any change to what verification accepts or rejects — the check order, the
+Any change to what verification accepts or rejects - the check order, the
 binding rules, the meaning of `VerifiedPublicValues`. **Loosening is breaking.**
 Tightening may also be breaking for callers who relied on the looser behaviour,
 and is documented loudly either way; correctness wins, but silently is never an
@@ -65,7 +65,7 @@ narrowing trait bounds, adding required trait methods.
   `BackendId`) or a field to a `#[non_exhaustive]` struct (`RunnerConfig`).
 - Adding a defaulted trait method to `BackendAdapter`.
 - Adding a builder method.
-- **A backend claiming a capability it newly implements and tests** — that is
+- **A backend claiming a capability it newly implements and tests** - that is
   additive, and it is the intended way for `*_ACCEL`, `AGGREGATION` or
   `ONCHAIN_PROOF` to appear.
 - Changing proof *size* or *proving time*. Performance is explicitly not part of
@@ -76,9 +76,9 @@ narrowing trait bounds, adding required trait methods.
 
 Adapters pin exact SDK versions. A bump is a visible change, released as:
 
-- **patch** — the SDK patch release changes nothing observable here;
-- **minor** — new capability or behaviour, additive;
-- **breaking** — the SDK changes proof format, identity derivation or
+- **patch** - the SDK patch release changes nothing observable here;
+- **minor** - new capability or behaviour, additive;
+- **breaking** - the SDK changes proof format, identity derivation or
   verification semantics. This is common in a fast-moving field and is not
   treated as an inconvenience to paper over.
 
@@ -91,7 +91,7 @@ mock, facade). Raising it is a minor-version change and is called out in the
 changelog.
 
 The `rust-toolchain.toml` pin is the *development* toolchain and is deliberately
-newer than the MSRV — partly so OpenVM (MSRV 1.91.1) can be evaluated without a
+newer than the MSRV - partly so OpenVM (MSRV 1.91.1) can be evaluated without a
 second rustup install. Do not read it as the MSRV.
 
 Backend SDKs carry their own, higher MSRVs (SP1 1.88; Jolt's alpha pins 1.95).

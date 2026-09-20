@@ -3,7 +3,7 @@
 //! # The problem this solves
 //!
 //! Every supported zkVM can compute SHA-256 inside a guest. Not every one does
-//! it in the same number of cycles — a backend precompile can be **orders of
+//! it in the same number of cycles - a backend precompile can be **orders of
 //! magnitude** cheaper than the same hash implemented in pure Rust and proven
 //! instruction by instruction. A library that exposed one `sha256()` function
 //! and quietly picked whichever was available would make proving cost
@@ -11,8 +11,8 @@
 //!
 //! So unified-zkvm separates two questions:
 //!
-//! 1. *What does this compute?* — answered identically on every backend.
-//! 2. *How is it proven?* — answered by [`CryptoSupport`], per backend, per
+//! 1. *What does this compute?* - answered identically on every backend.
+//! 2. *How is it proven?* - answered by [`CryptoSupport`], per backend, per
 //!    primitive.
 //!
 //! ```
@@ -43,7 +43,7 @@ use crate::capabilities::CapabilitySet;
 /// A cryptographic primitive a guest may use.
 ///
 /// The list is deliberately short. A primitive appears here only when it is
-/// implemented and tested against official vectors — adding a name without an
+/// implemented and tested against official vectors - adding a name without an
 /// implementation would make the capability report a lie.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[non_exhaustive]
@@ -73,7 +73,7 @@ pub enum CryptoImplementation {
     /// A pure-Rust implementation compiled into the guest.
     ///
     /// Produces identical output, but every instruction is proven, so the cost
-    /// is far higher. Correct — not free.
+    /// is far higher. Correct - not free.
     Portable,
     /// Not available on this backend in any form.
     Unsupported,
@@ -92,7 +92,7 @@ impl fmt::Display for CryptoImplementation {
 /// A backend's per-primitive crypto support report.
 ///
 /// Built by adapters from their [`CapabilitySet`] so the two can never
-/// disagree — a mismatch between "advertises SHA-256 acceleration" and "what
+/// disagree - a mismatch between "advertises SHA-256 acceleration" and "what
 /// the guest actually links against" is exactly the bug this type prevents.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CryptoSupport {
@@ -145,7 +145,7 @@ impl CryptoSupport {
 
     /// Returns `true` when `primitive` is proven by a backend precompile.
     ///
-    /// Use this to choose between algorithms when proving cost matters — for
+    /// Use this to choose between algorithms when proving cost matters - for
     /// example preferring SHA-256 over Keccak-256 on a backend that accelerates
     /// only the former.
     #[must_use]

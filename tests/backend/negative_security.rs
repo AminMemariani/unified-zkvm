@@ -1,7 +1,7 @@
 //! Negative security tests: what the system must **refuse**.
 //!
 //! Happy-path tests prove a library works. These prove it does not work when it
-//! shouldn't — which is the only property that matters when a proof arrives
+//! shouldn't - which is the only property that matters when a proof arrives
 //! from someone with an incentive to lie.
 //!
 //! Every test here corresponds to a concrete attack:
@@ -287,7 +287,7 @@ fn security_rejections_are_distinguishable_from_operational_failures() {
     assert_ne!(program_a.id(), program_b.id());
 }
 
-/// Public values cannot be trusted without verification — enforced by types.
+/// Public values cannot be trusted without verification - enforced by types.
 ///
 /// This test documents a *compile-time* guarantee rather than a runtime one.
 /// `ZkProof::into_verified` requires a `VerificationWitness`, which can only be

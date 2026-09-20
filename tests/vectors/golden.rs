@@ -5,7 +5,7 @@
 //! The round-trip property tests prove the codec is *self-consistent*. They do
 //! not prove it is *unchanged*. Swapping the codec, reordering a struct field,
 //! or bumping a dependency could keep every round trip passing while silently
-//! changing the bytes a guest sees — and a deployed guest ELF cannot be
+//! changing the bytes a guest sees - and a deployed guest ELF cannot be
 //! renegotiated after the fact.
 //!
 //! These vectors freeze the wire format. A failure here is not a bug in the
@@ -76,7 +76,7 @@ fn u64_max_is_pinned() {
 fn fixed_size_arrays_are_not_length_prefixed() {
     // A fixed array's length is known from the type, so it must NOT carry a
     // prefix. A codec that added one would break guests reading `[u8; 4]`.
-    // Note the 4-byte payload versus 5 for the Vec below — that difference is
+    // Note the 4-byte payload versus 5 for the Vec below - that difference is
     // the property under test.
     assert_encoding(&[1u8, 2, 3, 4], "5a4b01000400000001020304", "[u8; 4]");
 }
@@ -183,7 +183,7 @@ fn backend_discriminants_are_pinned_to_disk() {
 
 #[test]
 fn edge_cases_of_the_same_type_encode_distinctly() {
-    // Within a single type, distinct values must never collide — that is the
+    // Within a single type, distinct values must never collide - that is the
     // property the codec owes us. Across *different* types collisions are
     // expected and documented below.
     let vectors: Vec<(&str, Vec<u8>)> = vec![

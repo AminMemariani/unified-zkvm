@@ -4,10 +4,10 @@ Two binaries, two processes, one proof container. The prover computes and
 proves; the verifier checks the proof **without re-running the computation**.
 
 ```bash
-# 1. Prove — writes a .uzkvm container (defaults to $TMPDIR/fibonacci.uzkvm)
+# 1. Prove - writes a .uzkvm container (defaults to $TMPDIR/fibonacci.uzkvm)
 cargo run -p proof-verification-example --bin prover
 
-# 2. Verify — separate process, loads the container and checks it
+# 2. Verify - separate process, loads the container and checks it
 cargo run -p proof-verification-example --bin verifier
 ```
 

@@ -17,10 +17,10 @@ use unified_zkvm_guest::{zk_read, zk_read_bytes, zk_commit, zk_commit_bytes, sha
 | `zk_commit_bytes` | `fn zk_commit_bytes(bytes: &[u8]) -> Result<(), ZkVmError>` |
 | `sha256` | `fn sha256(input: &[u8]) -> [u8; 32]` |
 | `sha256_parts` | `fn sha256_parts(parts: &[&[u8]]) -> [u8; 32]` |
-| `keccak256` | `fn keccak256(input: &[u8]) -> Result<[u8; 32], ZkVmError>` — always `UnsupportedCapability` today |
+| `keccak256` | `fn keccak256(input: &[u8]) -> Result<[u8; 32], ZkVmError>` - always `UnsupportedCapability` today |
 | `active_backend` | `const fn active_backend() -> BackendId` |
 
-`zk_read` is the **private witness**. `zk_commit` writes **public values** — the
+`zk_read` is the **private witness**. `zk_commit` writes **public values** - the
 part the verifier sees. Committing a secret makes it public; that is the one
 mistake in this API that cryptography cannot undo for you.
 
@@ -39,8 +39,8 @@ fn main() {
 }
 ```
 
-The `#![no_main]` line is *not* emitted by the macro — an attribute macro cannot
-add an inner attribute — so the guest declares it itself, gated so the same file
+The `#![no_main]` line is *not* emitted by the macro - an attribute macro cannot
+add an inner attribute - so the guest declares it itself, gated so the same file
 still runs as an ordinary binary on the host.
 
 ## What `#[entrypoint]` expands to
@@ -87,7 +87,7 @@ Why it pays:
 - **The reference model is the same function.** The portability harness in
   `tests/` runs the real function through the mock backend, so a passing test
   means the plumbing (encode → transport → decode → commit → verify → decode) is
-  lossless — not that a stub matched a stub.
+  lossless - not that a stub matched a stub.
 - **Portability failures get isolated.** If the pure function passes and the
   guest fails, the problem is in I/O or the backend, not your logic.
 
@@ -123,7 +123,7 @@ yourself.
 
 ## Crypto in a guest
 
-`sha256` delegates to core, so the workspace has exactly one implementation —
+`sha256` delegates to core, so the workspace has exactly one implementation - 
 and a backend precompile substitutes itself underneath `sha2` through the guest
 manifest's `[patch.crates-io]`.
 
@@ -132,7 +132,7 @@ allocation and the cycles to copy it. It is **plain concatenation with no domain
 separation or length prefixing**: `(b"ab", b"c")` and `(b"a", b"bc")` produce
 the same digest. Add framing yourself if the pieces are attacker-influenced.
 
-`keccak256` currently returns `UnsupportedCapability`, deliberately — see
+`keccak256` currently returns `UnsupportedCapability`, deliberately - see
 [crypto.md](crypto.md).
 
 ## Building the guest ELF
@@ -145,7 +145,7 @@ the verifying-key hash). See [host-guide.md](host-guide.md).
 ## Guest dependency hygiene
 
 `unified-zkvm-guest`'s manifest carries an explicit rule: no host-side
-dependencies — no async runtime, no HTTP client, no filesystem client. Apply the
+dependencies - no async runtime, no HTTP client, no filesystem client. Apply the
 same rule to your own guest crate. Every dependency is cycles, and cycles are
 proving time.
 

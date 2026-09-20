@@ -20,7 +20,7 @@ unified-zkvm actually controls. The abstraction adds:
 - optional container framing when a proof is persisted.
 
 All of that is serialization and a handful of comparisons. Proving is the
-dominant cost by a wide margin — measuring the overhead requires isolating it
+dominant cost by a wide margin - measuring the overhead requires isolating it
 from proving, not measuring them together.
 
 ### 2. Which backend is faster?
@@ -47,7 +47,7 @@ When numbers are published, they will come with all of this:
 | Proof kind | `Native` or `Compressed`, named per vendor too |
 | Precompiles | the exact `[patch.crates-io]` set used |
 | Metrics | cycles, wall-clock proving time, peak RSS, proof bytes, verification time |
-| Statistics | repeat count, median and spread — not a single lucky run |
+| Statistics | repeat count, median and spread - not a single lucky run |
 | Reproduction | the exact command |
 
 Rules that come with it:
@@ -61,7 +61,7 @@ Rules that come with it:
 5. **Never extrapolate** from one workload to "backend X is faster".
 
 `criterion` is already a dev-dependency for host-side microbenchmarks
-(encode/decode, container round-trip, capability checks) — the parts that can be
+(encode/decode, container round-trip, capability checks) - the parts that can be
 measured without a proving SDK.
 
 ## What we will not do
@@ -77,7 +77,7 @@ This is the useful version, and the abstraction is designed to make it cheap:
 
 1. Write the guest once against the portable API.
 2. Use `runner.execute(&program, &input)` to get an `ExecutionResult` whose
-   `ResourceUsage` carries cycles and execution time — **without proving**.
+   `ResourceUsage` carries cycles and execution time - **without proving**.
    Cycle count is the best early signal.
 3. Compile each adapter you are considering and prove the same input.
 4. Record everything in the table above.
@@ -88,6 +88,6 @@ debugging tool, never a source of trusted output.
 
 ## Related
 
-- [backend-comparison.md](backend-comparison.md) — facts, no rankings
-- [crypto.md](crypto.md) — why precompiles dominate hashing costs
+- [backend-comparison.md](backend-comparison.md) - facts, no rankings
+- [crypto.md](crypto.md) - why precompiles dominate hashing costs
 - [host-guide.md](host-guide.md)

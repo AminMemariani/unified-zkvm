@@ -58,19 +58,19 @@
 //! | Feature | Enables | Default |
 //! |---|---|---|
 //! | `std` | Standard library support | ✅ |
-//! | `host` | [`host`] — proving and verification | ✅ |
-//! | `guest` | the guest I/O module — `zk_read` / `zk_commit` | — |
-//! | `macros` | `#[entrypoint]` | — |
-//! | `mock` | [`mock`] — development backend, **no real proofs** | ✅ |
-//! | `sp1` | SP1 guest runtime | — |
-//! | `risc0` | RISC Zero guest runtime | — |
+//! | `host` | [`host`] - proving and verification | ✅ |
+//! | `guest` | the guest I/O module - `zk_read` / `zk_commit` | - |
+//! | `macros` | `#[entrypoint]` | - |
+//! | `mock` | [`mock`] - development backend, **no real proofs** | ✅ |
+//! | `sp1` | SP1 guest runtime | - |
+//! | `risc0` | RISC Zero guest runtime | - |
 //!
 //! Backend features are never default: each pulls a proving SDK of several
 //! hundred crates, and most builds need at most one.
 //!
 //! # What "portable" does and does not mean
 //!
-//! It means your application code — business logic, I/O, proof handling — does
+//! It means your application code - business logic, I/O, proof handling - does
 //! not change when you switch backends. It does **not** mean every guest runs
 //! unchanged on every zkVM, that proving costs are comparable, or that proof
 //! bytes are interchangeable. Those differences are real, and the library

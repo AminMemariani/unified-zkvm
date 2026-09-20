@@ -24,7 +24,7 @@ pub fn prover_backend() -> MockBackend {
     MockBackend::new().with_guest(guest)
 }
 
-/// A backend with **no guest registered** — the verifier cannot run the
+/// A backend with **no guest registered** - the verifier cannot run the
 /// computation even by accident.
 pub fn verifier_backend() -> MockBackend {
     MockBackend::new()

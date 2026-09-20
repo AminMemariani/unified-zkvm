@@ -2,7 +2,7 @@
 //!
 //! This crate is the stable center of the project. It deliberately depends on
 //! **no** zkVM SDK: adding `unified-zkvm-core` to a project pulls in `serde`,
-//! `postcard`, `bitflags` and `sha2` — nothing else. Every heavyweight proving
+//! `postcard`, `bitflags` and `sha2` - nothing else. Every heavyweight proving
 //! dependency lives behind a backend adapter crate.
 //!
 //! # What lives here
@@ -11,10 +11,10 @@
 //! |---|---|
 //! | [`error`] | The [`ZkVmError`] hierarchy shared by every backend |
 //! | [`backend`] | [`BackendId`] and the [`BackendAdapter`] contract |
-//! | [`capabilities`] | [`CapabilitySet`] — what a backend *actually* implements |
-//! | [`program`] | [`ProgramId`] / [`ProgramArtifact`] — program identity |
-//! | [`proof`] | [`ZkProof`] — the portable proof envelope |
-//! | [`public_values`] | [`PublicValues`] — committed output bytes |
+//! | [`capabilities`] | [`CapabilitySet`] - what a backend *actually* implements |
+//! | [`program`] | [`ProgramId`] / [`ProgramArtifact`] - program identity |
+//! | [`proof`] | [`ZkProof`] - the portable proof envelope |
+//! | [`public_values`] | [`PublicValues`] - committed output bytes |
 //! | [`io`] | Canonical guest I/O encoding ([`ZkMessage`]) |
 //! | [`crypto`] | Crypto capability reporting and portable fallbacks |
 //! | [`container`] | The on-disk `UZKVMPRF` proof container |
@@ -34,10 +34,10 @@
 //! # Security
 //!
 //! Reading [`PublicValues`] from an unverified [`ZkProof`] is meaningless.
-//! The API is arranged so that verification happens first — see
+//! The API is arranged so that verification happens first - see
 //! [`proof::VerifiedPublicValues`] and `docs/security-model.md`.
 //!
-//! [`unified-zkvm`]: https://github.com/unified-zkvm/unified-zkvm
+//! [`unified-zkvm`]: https://github.com/AminMemariani/unified-zkvm
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![forbid(unsafe_code)]

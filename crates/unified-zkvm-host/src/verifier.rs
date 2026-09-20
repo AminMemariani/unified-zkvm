@@ -51,8 +51,8 @@ impl<B: BackendAdapter> Verifier<B> {
     ///
     /// The order of checks matters and is enforced by the adapter contract:
     ///
-    /// 1. backend match — an SP1 proof is never handed to a RISC Zero verifier;
-    /// 2. program identity match — a valid proof of the *wrong* program is
+    /// 1. backend match - an SP1 proof is never handed to a RISC Zero verifier;
+    /// 2. program identity match - a valid proof of the *wrong* program is
     ///    rejected;
     /// 3. cryptographic verification.
     ///

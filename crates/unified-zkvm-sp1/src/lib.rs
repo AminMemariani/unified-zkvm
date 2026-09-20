@@ -3,7 +3,7 @@
 //! This crate turns the portable [`BackendAdapter`] contract into real SP1 calls:
 //! it derives program identity from the verifying key, writes host input in the
 //! exact framing the guest runtime reads back, and delegates verification to
-//! SP1's own verifier — never to a local shortcut.
+//! SP1's own verifier - never to a local shortcut.
 //!
 //! # What is supported
 //!
@@ -94,7 +94,7 @@ pub struct Sp1Backend {
     /// Caches verifying keys by program content digest.
     ///
     /// SP1 6.8.0 exposes the verifying key only through `setup()`, which does
-    /// the full proving-key derivation — expensive enough that calling it per
+    /// the full proving-key derivation - expensive enough that calling it per
     /// verification would make verifying about as costly as setting up to
     /// prove. Since a program's key is a pure function of its ELF, caching it
     /// is safe and restores "verification is cheap to integrate".
@@ -167,7 +167,7 @@ impl Sp1Backend {
         Ok(vk)
     }
 
-    /// Derives the program artifact — including SP1's real program identity —
+    /// Derives the program artifact - including SP1's real program identity -
     /// from guest ELF bytes.
     ///
     /// Identity is the verifying-key hash, not a digest of the ELF. That matters

@@ -51,7 +51,7 @@ their own SDK. Core never knows about adapters.
 
 The practical consequence: adding a backend cannot change core's API, and
 core can be audited without reading a proving SDK. `BackendId` does enumerate
-planned backends (`Jolt`, `OpenVm`, `Pico`) — that is a *name and stable
+planned backends (`Jolt`, `OpenVm`, `Pico`) - that is a *name and stable
 discriminant* reservation, not a dependency. `BackendId::integration_status()`
 reports what is actually implemented.
 
@@ -59,7 +59,7 @@ reports what is actually implemented.
 
 **Guest crates pay for every byte.** A guest program's dependency tree becomes
 proving cycles. `unified-zkvm-guest` is therefore deliberately free of
-host-side machinery — no async runtime, no HTTP client, no filesystem client —
+host-side machinery - no async runtime, no HTTP client, no filesystem client - 
 and its manifest carries a comment saying exactly that. If host and guest shared
 one crate, guests would link host code.
 
@@ -68,17 +68,24 @@ one crate, guests would link host code.
 impls and filesystem proof save/load. Keeping proof and message types in a
 `no_std` crate means the same type describes a proof on both sides.
 
-**Adapters are excluded from the default workspace.** The root `Cargo.toml`
-`exclude` list keeps `unified-zkvm-sp1` and `unified-zkvm-risc0` out of
-`cargo test --workspace`, with the reason stated in the manifest: each pulls a
-multi-hundred-crate proving SDK, and guest builds additionally require a vendor
-toolchain that rustup does not install. Excluding them is what makes
-`git clone && cargo test --workspace` work in seconds on a machine with no zkVM.
-They are built explicitly by the backend CI job.
+**Adapters are full workspace members.** `unified-zkvm-sp1` and
+`unified-zkvm-risc0` are covered by `cargo test --workspace`, so an API change
+in core that breaks an adapter fails immediately rather than days later in a
+scheduled job. That matters for a project whose whole value is a stable
+abstraction: the adapters are the only real proof that the abstraction fits
+more than one backend.
 
-The tradeoff is real and worth stating: an excluded crate is not covered by the
-default `cargo check`, so an API change in core can break an adapter without the
-main test run noticing. Mitigation is the separate backend CI job — not hope.
+The cost is a slow first build, since both proving SDKs compile, and one host
+prerequisite (`protoc`, for SP1). Contributors working purely on the
+abstraction can sidestep both by selecting crates with `-p`, which is documented
+in [CONTRIBUTING.md](../CONTRIBUTING.md).
+
+Isolation still holds where it counts. Each adapter is its own crate with its
+own dependency tree, so a downstream user enabling SP1 never compiles RISC Zero,
+and upgrading one SDK cannot disturb the other. Membership is about *our* test
+coverage; crate separation is about *their* build cost. Notably, both SDKs
+coexist in one dependency graph without a feature-unification conflict, which is
+itself worth knowing.
 
 **Macros are separate because proc-macro crates must be.** It is also a
 deliberately small crate: exactly one macro, which earns its place by hiding a
@@ -130,6 +137,6 @@ would defeat the purpose of a differential test.
 
 ## Related
 
-- [backend-compatibility.md](backend-compatibility.md) — per-backend truth
+- [backend-compatibility.md](backend-compatibility.md) - per-backend truth
 - [guest-guide.md](guest-guide.md) / [host-guide.md](host-guide.md)
-- [adr/](adr/) — the decisions and their negative consequences
+- [adr/](adr/) - the decisions and their negative consequences

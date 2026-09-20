@@ -1,13 +1,28 @@
-[workspace]
-
 [package]
 name = "unified-zkvm-risc0"
-version = "0.1.0"
-edition = "2021"
-license = "MIT OR Apache-2.0"
 description = "RISC Zero backend adapter for unified-zkvm."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [dependencies]
-unified-zkvm-core = { path = "../unified-zkvm-core", features = ["std"] }
-risc0-zkvm = { version = "3.0.6", default-features = false, features = ["client", "prove", "std"] }
-bincode = "1.3"
+# Published with a version as well as a path: crates.io rejects path-only
+# dependencies, and the path keeps local workspace builds using the in-tree
+# crate rather than the registry copy.
+unified-zkvm-core = { workspace = true, features = ["std"] }
+# `prove` is NOT a default feature: without it `default_prover()` panics at
+# runtime looking for the external `r0vm` binary. `default-features = false`
+# also drops `bonsai`, which would otherwise silently route proving to a remote
+# service when BONSAI_API_URL / BONSAI_API_KEY are set in the environment.
+risc0-zkvm = { version = "3.0.6", default-features = false, features = [
+    "client",
+    "prove",
+    "std",
+] }
+bincode = "1.3.3"

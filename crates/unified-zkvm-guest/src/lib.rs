@@ -38,7 +38,7 @@
 //! | `sp1` | SP1 zkVM | proving with SP1 |
 //! | `risc0` | RISC Zero zkVM | proving with RISC Zero |
 //!
-//! Enabling two backend features at once is a compile error — a guest binary
+//! Enabling two backend features at once is a compile error - a guest binary
 //! targets exactly one zkVM.
 //!
 //! # Encoding

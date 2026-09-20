@@ -11,7 +11,7 @@ visible only to maintainers.
 Include what you have: affected crate and version, the component
 (core / guest / host / mock / an adapter), a description of the issue, a
 reproduction if you have one, and your assessment of the impact. A partial
-report is welcome — do not wait until it is perfect.
+report is welcome - do not wait until it is perfect.
 
 ### What to expect
 
@@ -40,7 +40,7 @@ support branch yet.
 
 Issues in **this project's code**:
 
-- Verification that accepts what it should reject — a proof for a different
+- Verification that accepts what it should reject - a proof for a different
   program, from a different backend, or with altered public values.
 - Any path that yields `VerifiedPublicValues` without the backend's
   cryptographic verifier having succeeded.
@@ -51,25 +51,25 @@ Issues in **this project's code**:
 - A mock artifact reaching a real verifier, or any weakening of the three guards
   that isolate the mock backend.
 - Silent proof-kind downgrades, or a configuration that weakens verification.
-- Unintended disclosure of the private witness — for example telemetry logging
+- Unintended disclosure of the private witness - for example telemetry logging
   guest input without being asked to.
 - Supply-chain issues in this repository's own dependency declarations.
 
 ## Backend dependency vulnerabilities
 
 If the issue is in `sp1-sdk`, `risc0-zkvm` or another upstream SDK, **report it
-to that project first** — they own the fix and the disclosure timeline. Then let
+to that project first** - they own the fix and the disclosure timeline. Then let
 us know privately so we can plan a version bump and, if needed, publish an
 advisory pointing at theirs.
 
-If the issue is in how *our adapter uses* an SDK — a missing verification step,
-a misused API, a dangerous default feature — that is ours and is in scope.
+If the issue is in how *our adapter uses* an SDK - a missing verification step,
+a misused API, a dangerous default feature - that is ours and is in scope.
 
 ## Proof soundness concerns
 
 If you believe a backend's proof system is unsound, that is a finding about the
 backend, and it belongs with the backend's maintainers first. We will act on it
-here by adjusting or withdrawing our adapter, and we will document it — but
+here by adjusting or withdrawing our adapter, and we will document it - but
 **unified-zkvm is an abstraction layer and does not independently make an
 underlying zkVM cryptographically secure.** See
 [docs/security-model.md](docs/security-model.md).
@@ -105,5 +105,5 @@ against good-faith research.
 - Leave `telemetry.log_guest_input` off outside local debugging.
 - Keep `risc0-zkvm`'s `default-features = false` so `bonsai` cannot route
   proving to a remote service from environment variables.
-- Share the exact input/output types between host and guest — postcard is not
+- Share the exact input/output types between host and guest - postcard is not
   self-describing, and the wrong type can decode successfully to a wrong value.

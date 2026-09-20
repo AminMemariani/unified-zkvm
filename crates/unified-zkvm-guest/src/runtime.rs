@@ -3,7 +3,7 @@
 //! [`GuestRuntime`] is the single seam between portable guest code and a zkVM's
 //! native I/O. It has two methods, because that is genuinely all a guest needs:
 //! read a blob from the host, and commit a blob as public output. Everything
-//! else in this crate — typed I/O, crypto — is built on top of those two.
+//! else in this crate - typed I/O, crypto - is built on top of those two.
 //!
 //! Which implementation is active is decided by cargo features at compile time,
 //! so there is no dispatch cost: the selected runtime's methods are the only
@@ -25,7 +25,7 @@ use unified_zkvm_core::ZkVmError;
 ///   order; ordering is observable to the verifier.
 ///
 /// Both are associated functions rather than methods because guest runtimes are
-/// process-global — there is exactly one host channel per guest execution, and
+/// process-global - there is exactly one host channel per guest execution, and
 /// modelling it as an instance would imply a choice that does not exist.
 pub trait GuestRuntime {
     /// Reads the next input blob from the host.
@@ -77,7 +77,7 @@ mod host_test {
     ///
     /// It makes guest programs runnable as ordinary Rust, so business logic can
     /// be unit-tested with `cargo test` and no zkVM toolchain. This is the
-    /// single biggest contributor to a fast debugging loop — see
+    /// single biggest contributor to a fast debugging loop - see
     /// `docs/guest-guide.md`.
     ///
     /// # Security
@@ -161,7 +161,7 @@ mod risc0_runtime {
     impl GuestRuntime for Risc0Runtime {
         fn read_bytes() -> Result<Vec<u8>, ZkVmError> {
             // `read_frame` pairs with the host's `write_frame`, giving a
-            // length-delimited blob rather than risc0's word-oriented serde —
+            // length-delimited blob rather than risc0's word-oriented serde -
             // which is what keeps our canonical framing intact.
             Ok(risc0_zkvm::guest::env::read_frame())
         }

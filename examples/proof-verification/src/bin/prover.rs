@@ -2,7 +2,7 @@
 //!
 //! Runs the guest, proves it, and writes a self-contained `.uzkvm` proof
 //! container to disk. After this process exits, the proof is the only thing
-//! that crosses to the verifier — no shared memory, no shared state, no
+//! that crosses to the verifier - no shared memory, no shared state, no
 //! re-running the computation.
 //!
 //! Run it:
@@ -35,7 +35,7 @@ fn main() -> Result<()> {
     let input = FibonacciInput { n: 20 };
     let proof = runner.prove(&artifact, &input)?;
 
-    // Sanity check locally — the prover may decode its own claim, because it
+    // Sanity check locally - the prover may decode its own claim, because it
     // already knows the answer. The verifier must not.
     let claimed: FibonacciOutput = proof.public_values_unverified().decode_unverified()?;
 

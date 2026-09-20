@@ -6,7 +6,7 @@
 //! wrong, because the supported backends do not agree on the shape of program
 //! identity:
 //!
-//! * RISC Zero uses an **image ID** — a 32-byte Poseidon/SHA digest of the
+//! * RISC Zero uses an **image ID** - a 32-byte Poseidon/SHA digest of the
 //!   initial memory image.
 //! * SP1 uses a **verifying key** whose canonical digest is 8 `u32` words
 //!   (32 bytes when packed little-endian).
@@ -56,7 +56,7 @@ pub enum ProgramIdValue {
 
     /// An opaque backend-defined identifier.
     ///
-    /// Used when identity is not a single digest — for example OpenVM's pair of
+    /// Used when identity is not a single digest - for example OpenVM's pair of
     /// commitments. The bytes are compared for equality and never interpreted
     /// by the core crate.
     Opaque(Vec<u8>),
@@ -179,7 +179,7 @@ impl ProgramId {
     /// Renders the identity as a short hex string suitable for logs.
     ///
     /// Truncated to 8 bytes: enough to distinguish programs during debugging,
-    /// short enough to keep log lines readable. Never use this for comparison —
+    /// short enough to keep log lines readable. Never use this for comparison -
     /// use [`PartialEq`] on the full value.
     #[must_use]
     pub fn short_hex(&self) -> String {
@@ -202,8 +202,8 @@ impl fmt::Display for ProgramId {
 /// A compiled guest program together with its backend identity.
 ///
 /// The artifact owns the program bytes (typically a RISC-V ELF). Backends that
-/// need a further-processed form — OpenVM transpiles the ELF into a `VmExe`,
-/// SP1 wraps it in its own `Elf` type — perform that conversion inside the
+/// need a further-processed form - OpenVM transpiles the ELF into a `VmExe`,
+/// SP1 wraps it in its own `Elf` type - perform that conversion inside the
 /// adapter, keeping vendor types out of the portable layer.
 #[derive(Clone, PartialEq, Eq)]
 pub struct ProgramArtifact {

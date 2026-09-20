@@ -6,9 +6,9 @@
 //!
 //! The invariants under test:
 //!
-//! 1. **Round trip** — `decode(encode(v)) == v` for all supported values.
-//! 2. **Determinism** — encoding the same value twice yields identical bytes.
-//! 3. **Total parsing** — arbitrary bytes either decode or error; never panic.
+//! 1. **Round trip** - `decode(encode(v)) == v` for all supported values.
+//! 2. **Determinism** - encoding the same value twice yields identical bytes.
+//! 3. **Total parsing** - arbitrary bytes either decode or error; never panic.
 
 use proptest::prelude::*;
 use unified_zkvm_core::{
@@ -145,7 +145,7 @@ proptest! {
         prop_assert_eq!(container::from_bytes(&bytes).unwrap(), proof);
     }
 
-    /// Any single-byte corruption of a container must be detected or error —
+    /// Any single-byte corruption of a container must be detected or error -
     /// never silently yield a different valid proof.
     #[test]
     fn single_byte_corruption_does_not_yield_a_silently_different_proof(
@@ -168,7 +168,7 @@ proptest! {
         match container::from_bytes(&bytes) {
             Err(_) => {}
             Ok(decoded) => {
-                // If it still parses, it must differ from the original —
+                // If it still parses, it must differ from the original -
                 // otherwise the corrupted byte was not covered by the format.
                 prop_assert_ne!(decoded.digest(), proof.digest());
             }

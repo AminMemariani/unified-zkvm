@@ -22,7 +22,7 @@
 //! * **Not compared:** proof bytes. They are backend-native artifacts and will
 //!   never match. A test asserting otherwise would be asserting something false.
 //! * **Not compared:** proving time or proof size. Portability is not a
-//!   performance guarantee — see the README's limitations section.
+//!   performance guarantee - see the README's limitations section.
 //!
 //! # Which backends run here
 //!

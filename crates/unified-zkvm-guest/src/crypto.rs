@@ -11,7 +11,7 @@
 //!   can be orders of magnitude more expensive.
 //!
 //! The output is identical either way, so correctness never depends on which
-//! path was taken — but performance very much does. Query
+//! path was taken - but performance very much does. Query
 //! [`unified_zkvm_core::CryptoSupport`] on the host to find out which applies
 //! before designing a guest around a particular primitive, and see
 //! `docs/crypto.md`.
@@ -19,7 +19,7 @@
 //! # No new cryptography
 //!
 //! SHA-256 comes from the audited `sha2` crate. Keccak-256 is reported as
-//! unsupported rather than hand-implemented — see [`keccak256`].
+//! unsupported rather than hand-implemented - see [`keccak256`].
 
 use alloc::vec::Vec;
 

@@ -1,8 +1,8 @@
 # Default owners for everything in the repo.
-* @unified-zkvm/maintainers
+* @AminMemariani
 
 # Backend adapters are maintained by their own teams.
-/crates/unified-zkvm-sp1/   @unified-zkvm/sp1-maintainers
-/crates/unified-zkvm-risc0/ @unified-zkvm/risc0-maintainers
+/crates/unified-zkvm-sp1/   @AminMemariani
+/crates/unified-zkvm-risc0/ @AminMemariani
 
-/docs/ @unified-zkvm/docs
+/docs/ @AminMemariani

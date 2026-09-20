@@ -1,20 +1,40 @@
 # Contributing
 
 Thanks for considering a contribution. This project's credibility rests on being
-honest about backend differences, so **accuracy outranks polish** everywhere —
+honest about backend differences, so **accuracy outranks polish** everywhere - 
 in code, in capability bits, and in documentation.
 
 ## Setup
 
 ```bash
-git clone https://github.com/unified-zkvm/unified-zkvm
+git clone https://github.com/AminMemariani/unified-zkvm
 cd unified-zkvm
 cargo test --workspace
 ```
 
-That is the whole setup. **No zkVM, no vendor toolchain, no `protoc` required** —
-backend adapters are excluded from the default workspace precisely so this
-works on a clean machine in seconds.
+This builds and tests every crate, adapters included, so it needs **`protoc`**
+on your PATH for the SP1 SDK:
+
+```bash
+brew install protobuf            # macOS
+sudo apt install protobuf-compiler   # Debian / Ubuntu
+```
+
+No zkVM toolchain is required: `sp1up` and `rzup` are only needed for the
+`#[ignore]`d end-to-end proving tests. The RISC Zero GPU-kernel build is
+disabled for you by `.cargo/config.toml`.
+
+The first run compiles both proving SDKs and takes several minutes; afterwards
+it is fast.
+
+**Working on the abstraction, not a backend?** Skip the SDKs entirely:
+
+```bash
+cargo test -p unified-zkvm-core -p unified-zkvm-host \
+           -p unified-zkvm-guest -p unified-zkvm-mock -p unified-zkvm-tests
+```
+
+That needs no `protoc` and runs in seconds on a clean machine.
 
 MSRV is **1.85** for the workspace core. `rust-toolchain.toml` pins a newer
 *development* channel (partly so OpenVM's 1.91.1 MSRV can be evaluated without a
@@ -50,18 +70,15 @@ cargo clippy --workspace --all-targets -- -D warnings
 ```
 
 A **golden-vector failure is never flaky.** It means the wire encoding changed,
-which is semver-breaking — see [docs/versioning.md](docs/versioning.md).
+which is semver-breaking - see [docs/versioning.md](docs/versioning.md).
 
 ## Running one backend
 
-Adapters are outside the workspace, so build them explicitly:
+Adapters are ordinary workspace members, so target them with `-p`:
 
 ```bash
-brew install protobuf                                   # SP1 needs protoc
-cargo test --manifest-path crates/unified-zkvm-sp1/Cargo.toml
-
-RISC0_SKIP_BUILD_KERNELS=1 \
-  cargo test --manifest-path crates/unified-zkvm-risc0/Cargo.toml
+cargo test -p unified-zkvm-sp1
+cargo test -p unified-zkvm-risc0
 ```
 
 End-to-end proving tests are `#[ignore]`d because they need the vendor toolchain
@@ -69,20 +86,20 @@ End-to-end proving tests are `#[ignore]`d because they need the vendor toolchain
 are installed. The RISC Zero one reads its ELF path from `UZKVM_RISC0_TEST_ELF`.
 
 **If you change a core API, build both adapters before pushing.** They are not
-covered by `cargo check --workspace` — the known cost of the exclusion.
+covered by `cargo check --workspace` - the known cost of the exclusion.
 
 Symptom-to-fix table: [docs/troubleshooting.md](docs/troubleshooting.md).
 
 ## Adding a backend
 
-Follow [docs/adding-a-backend.md](docs/adding-a-backend.md) — it is a contract,
+Follow [docs/adding-a-backend.md](docs/adding-a-backend.md) - it is a contract,
 not a suggestion. The rules that get PRs sent back:
 
 - **Capability honesty.** A bit is set only if this adapter implements it *and* a
   test exercises it. "The SDK supports it" is not sufficient.
 - **`verify()` must call the SDK's real verifier**, after `verify_binding`.
 - **Program identity must be what the verifier binds to** (for SP1, the
-  verifying-key hash — not an ELF digest).
+  verifying-key hash - not an ELF digest).
 - **`BackendId` discriminants are never reused or renumbered.** They are written
   to disk.
 
@@ -128,7 +145,7 @@ explaining the migration.
 1. Branch from `main`.
 2. Tests and docs in the same PR as the code.
 3. `cargo fmt`, `cargo clippy -D warnings`, `cargo test --workspace` all green.
-4. A `CHANGELOG.md` entry for anything user-visible — specific items, never
+4. A `CHANGELOG.md` entry for anything user-visible - specific items, never
    "various improvements".
 5. Fill in the PR template; say what you did **not** verify.
 
@@ -140,10 +157,14 @@ parsing bounds) get extra review and must come with negative tests.
 1. Update `CHANGELOG.md`; move `Unreleased` into a version heading.
 2. Bump `workspace.package.version`.
 3. Confirm MSRV and pinned SDK versions are accurate in the docs.
-4. `cargo test --workspace`, then build both adapters.
+4. `cargo test --workspace`.
 5. Tag `vX.Y.Z`.
-6. Publish in dependency order: `core`, `guest`, `macros`, `mock`, `host`,
-   `unified-zkvm`, then the adapters.
+6. Publish in dependency order, ending with the `unified-zkvm` facade, which
+   depends on everything else.
+
+Publishing is irreversible, so the exact order, the pre-flight checks, and what
+to do when something goes wrong are written out in
+[docs/releasing.md](docs/releasing.md). Follow that, not this summary.
 
 ## Reporting security issues
 

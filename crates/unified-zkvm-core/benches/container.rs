@@ -1,6 +1,6 @@
 //! Proof-container benchmarks.
 //!
-//! # What these numbers mean — and what they do not
+//! # What these numbers mean - and what they do not
 //!
 //! These benchmarks measure **the abstraction layer's overhead only**: writing
 //! and parsing the `.uzkvm` container around an already-generated proof. They

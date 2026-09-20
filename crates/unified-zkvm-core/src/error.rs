@@ -164,7 +164,7 @@ pub enum ZkVmError {
         reason: String,
     },
 
-    /// A proof was structurally invalid — it failed parsing, not cryptography.
+    /// A proof was structurally invalid - it failed parsing, not cryptography.
     ///
     /// Distinct from [`Self::VerificationFailed`]: this means the bytes were
     /// never a well-formed proof, which usually indicates corruption or a
@@ -274,7 +274,7 @@ impl ZkVmError {
     /// Wraps a backend SDK error with full operational context.
     ///
     /// Prefer this over `map_err(|e| ZkVmError::Backend { .. })` spelled out at
-    /// each call site — it keeps adapters terse and guarantees the context
+    /// each call site - it keeps adapters terse and guarantees the context
     /// fields are actually populated.
     #[cfg(feature = "std")]
     pub fn backend<E>(backend: BackendId, operation: Operation, stage: Stage, source: E) -> Self

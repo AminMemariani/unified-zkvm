@@ -10,7 +10,9 @@ homepage.workspace = true
 authors.workspace = true
 keywords.workspace = true
 categories.workspace = true
-readme = "README.md"
+# No per-crate README: the crate-level rustdoc in src/lib.rs is the canonical
+# documentation, and crates.io renders the description plus docs.rs link.
+# A `readme` pointing outside the package directory cannot be packaged.
 
 [dependencies]
 serde = { workspace = true }
@@ -23,7 +25,7 @@ proptest = { workspace = true }
 hex = { workspace = true, default-features = false, features = ["alloc"] }
 criterion = { workspace = true }
 
-# Benchmarks measure the abstraction layer only — never proving time.
+# Benchmarks measure the abstraction layer only - never proving time.
 [[bench]]
 name = "serialization"
 harness = false

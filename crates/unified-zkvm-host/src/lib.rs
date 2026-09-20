@@ -21,8 +21,8 @@
 //!
 //! [`ZkHostRunner<B>`] is generic over the backend, so calls are direct and the
 //! compiler can inline through them. Runtime selection is available when it is
-//! genuinely needed — `ZkHostRunner<Box<dyn BackendAdapter>>` works, because the
-//! adapter trait is object safe — but it is opt-in rather than imposed.
+//! genuinely needed - `ZkHostRunner<Box<dyn BackendAdapter>>` works, because the
+//! adapter trait is object safe - but it is opt-in rather than imposed.
 //!
 //! # Synchronous, on purpose
 //!

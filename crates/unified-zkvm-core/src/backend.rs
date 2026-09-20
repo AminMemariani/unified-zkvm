@@ -1,7 +1,7 @@
 //! Backend identity and the adapter contract.
 //!
 //! [`BackendAdapter`] is the single trait an integration must implement. It is
-//! deliberately small — five methods — because every method added here is a
+//! deliberately small - five methods - because every method added here is a
 //! method that five backends must implement correctly and that the project must
 //! support forever.
 //!
@@ -172,7 +172,7 @@ impl fmt::Display for IntegrationStatus {
 /// Resource metrics reported by a backend.
 ///
 /// Every field is [`Option`] because backends genuinely differ in what they
-/// measure. A missing metric is `None` — never a fabricated zero, which would
+/// measure. A missing metric is `None` - never a fabricated zero, which would
 /// be indistinguishable from a real measurement of zero.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ResourceUsage {
@@ -213,7 +213,7 @@ pub struct ExecutionResult {
 /// # Implementing
 ///
 /// * [`Self::capabilities`] must report only what is implemented **and tested**.
-/// * [`Self::prove`] must return a genuine backend proof or an error — never a
+/// * [`Self::prove`] must return a genuine backend proof or an error - never a
 ///   placeholder. The only exception in this workspace is the clearly named
 ///   mock backend.
 /// * [`Self::verify`] must delegate to the backend's real verifier. Returning
@@ -251,7 +251,7 @@ pub trait BackendAdapter: Send + Sync {
     /// # Errors
     ///
     /// Returns [`ZkVmError::UnsupportedProofKind`] if `options` requests a proof
-    /// kind this backend cannot produce — it must not silently downgrade — and
+    /// kind this backend cannot produce - it must not silently downgrade - and
     /// [`ZkVmError::Backend`] if proving fails.
     fn prove(
         &self,
@@ -266,7 +266,7 @@ pub trait BackendAdapter: Send + Sync {
     ///
     /// Implementations **must**, in this order:
     ///
-    /// 1. call [`ZkProof::verify_binding`] — a proof of the wrong program is a
+    /// 1. call [`ZkProof::verify_binding`] - a proof of the wrong program is a
     ///    failure even when its cryptography is valid;
     /// 2. delegate to the backend's real cryptographic verifier;
     /// 3. only then mint the returned [`VerificationWitness`].

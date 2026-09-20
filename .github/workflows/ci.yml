@@ -11,32 +11,53 @@ concurrency:
 
 env:
   CARGO_TERM_COLOR: always
+  # The RISC Zero adapter's build script compiles GPU kernels, which needs a
+  # toolchain no CI runner has. Skipping them disables GPU acceleration only;
+  # CPU proving, which the tests exercise, is unaffected.
+  RISC0_SKIP_BUILD_KERNELS: "1"
 
 jobs:
-  fmt:
-    name: rustfmt
+  # Fast gate: no proving SDKs, so this fails in under a minute on the mistakes
+  # that are easiest to make. Runs before anything expensive.
+  quick:
+    name: fmt + abstraction tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
+      - uses: Swatinem/rust-cache@v2
       - run: cargo fmt --all -- --check
+      # Crate-selected so no proving SDK is compiled. Mirrors the workflow
+      # documented in CONTRIBUTING.md for contributors without protoc.
+      - name: test the abstraction layer
+        run: |
+          cargo test -p unified-zkvm-core -p unified-zkvm-host \
+                     -p unified-zkvm-guest -p unified-zkvm-mock \
+                     -p unified-zkvm-macros -p unified-zkvm-tests
 
   clippy:
     name: clippy
     runs-on: ubuntu-latest
+    needs: quick
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
       - uses: Swatinem/rust-cache@v2
+      - uses: arduino/setup-protoc@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: cargo clippy --workspace --all-targets -- -D warnings
 
+  # Full workspace including both backend adapters. This is what proves the
+  # abstraction actually fits more than one backend.
   test:
-    name: test (${{ matrix.os }})
+    name: test --workspace (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    needs: quick
     strategy:
       fail-fast: false
       matrix:
@@ -45,25 +66,59 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      # Backend adapters are not workspace members, so no zkVM toolchain is needed.
+      - uses: arduino/setup-protoc@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: cargo test --workspace
 
   docs:
-    name: docs
+    name: rustdoc
     runs-on: ubuntu-latest
+    needs: quick
     env:
       RUSTDOCFLAGS: -D warnings
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
+      - uses: arduino/setup-protoc@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: cargo doc --workspace --no-deps
 
   msrv:
-    name: msrv 1.85
+    name: MSRV 1.85
     runs-on: ubuntu-latest
+    needs: quick
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.85
       - uses: Swatinem/rust-cache@v2
-      - run: cargo check --workspace
+      # The MSRV claim covers the abstraction crates. The SP1 SDK declares its
+      # own higher MSRV (1.88), so it is deliberately not part of this check;
+      # see the rust-version keys in each manifest.
+      - name: check MSRV crates
+        run: |
+          cargo check -p unified-zkvm-core -p unified-zkvm-host \
+                      -p unified-zkvm-guest -p unified-zkvm-mock \
+                      -p unified-zkvm-macros -p unified-zkvm
+
+  publish-dry-run:
+    name: packaging
+    runs-on: ubuntu-latest
+    needs: quick
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      # Catches the packaging mistakes that only appear at publish time, such as
+      # a readme path outside the package directory or a path-only dependency.
+      - name: verify every publishable crate packages
+        run: |
+          for c in unified-zkvm-core unified-zkvm-macros unified-zkvm-guest \
+                   unified-zkvm-host unified-zkvm-mock unified-zkvm \
+                   unified-zkvm-sp1 unified-zkvm-risc0; do
+            echo "::group::$c"
+            cargo package --list -p "$c" > /dev/null
+            echo "::endgroup::"
+          done

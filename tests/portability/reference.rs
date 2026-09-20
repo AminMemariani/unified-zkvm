@@ -3,7 +3,7 @@
 //! # Why a reference model exists
 //!
 //! Comparing backends only against each other proves they agree, not that they
-//! are **right** — five backends could be consistently wrong. Every portability
+//! are **right** - five backends could be consistently wrong. Every portability
 //! test therefore compares each backend against a plain Rust implementation
 //! that no zkVM ever touches.
 //!
@@ -33,7 +33,7 @@ pub struct FibonacciOutput {
 /// Computes the `n`th Fibonacci number.
 ///
 /// Uses `wrapping_add` so that large `n` has defined behaviour rather than
-/// panicking in release and aborting in debug — a guest panic is an execution
+/// panicking in release and aborting in debug - a guest panic is an execution
 /// failure, and the overflow point should not differ between a host test build
 /// and a zkVM build.
 #[must_use]
@@ -80,7 +80,7 @@ pub fn sha256_of(input: &Sha256Input) -> Sha256Output {
 /// A nested structure exercising non-trivial serialization.
 ///
 /// Deliberately mixes a fixed-size array, a variable-length collection, an
-/// `Option` and a nested struct — the shapes where backend-native encodings
+/// `Option` and a nested struct - the shapes where backend-native encodings
 /// most often diverge.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Order {

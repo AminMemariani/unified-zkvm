@@ -12,7 +12,7 @@ exists to avoid.
 - **Guest I/O calls.** `zk_read` and `zk_commit` are identical.
 - **The entrypoint.** `#[entrypoint]` emits the right ritual per backend.
 - **Host API.** `ZkHostRunner`, `prove`, `verify`, `prove_and_verify`,
-  `RunnerConfig`, `ProvingOptions` — same calls.
+  `RunnerConfig`, `ProvingOptions` - same calls.
 - **Serialization.** The canonical postcard framing is backend-neutral, so your
   input and output types carry over byte for byte.
 - **Proof container.** `container::save` / `load` work for both; the backend is
@@ -72,15 +72,15 @@ in flight.
 ### Program identity changes
 
 The new backend derives identity differently, so every `ProgramId` changes. Any
-system that pins an identity — a config file, an on-chain constant, an allowlist
-— needs updating. Verifying an old proof against a new program yields
+system that pins an identity - a config file, an on-chain constant, an allowlist
+- needs updating. Verifying an old proof against a new program yields
 `ProgramIdMismatch`, which is the binding check doing its job.
 
 ### Precompiles must be re-selected
 
 `[patch.crates-io]` entries in the guest manifest are backend-specific. Moving
 backends means replacing them. Since no adapter here claims an `*_ACCEL`
-capability, `CryptoSupport` will not tell you which patches are active — verify
+capability, `CryptoSupport` will not tell you which patches are active - verify
 by measuring cycles. See [crypto.md](crypto.md).
 
 ### Performance will differ
@@ -93,7 +93,7 @@ Measure on your own workload before and after; see
 ### Backend-specific code does not move
 
 Anything reached through `runner.backend()` is, by construction, tied to one
-SDK. That is why the escape hatch belongs in one clearly named module — the
+SDK. That is why the escape hatch belongs in one clearly named module - the
 migration cost is then the size of that module, and you can see it.
 
 ## Migrating to or from the mock backend

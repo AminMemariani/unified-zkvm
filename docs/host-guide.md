@@ -34,7 +34,7 @@ backend is a configuration error, not a panic.
 | `backend_id` / `capabilities` / `config` / `backend` | accessors |
 
 `execute` runs the guest **without proving**. Its `ExecutionResult::public_values`
-are *not proven* — they are the output of a local, unattested run. Useful for
+are *not proven* - they are the output of a local, unattested run. Useful for
 cycle counts and debugging; never for trusting a result.
 
 ### Verification returns the values
@@ -46,12 +46,12 @@ let output: MyOutput = verified.decode()?;
 ```
 
 Note the signature **requires the program**. There is deliberately no
-`verify(&proof)` that infers identity from the proof itself — that would check a
+`verify(&proof)` that infers identity from the proof itself - that would check a
 proof against whatever program the proof claims, which is no check at all.
 
 `VerifiedPublicValues` is obtainable only through verification: `into_verified()`
 requires a `VerificationWitness`, which only a backend adapter can mint on the
-success path of its `verify()`. The compiler, not a convention, enforces it —
+success path of its `verify()`. The compiler, not a convention, enforces it - 
 see [security-model.md](security-model.md#the-type-system-as-a-guardrail).
 If you genuinely need unverified values, `PublicValues::decode_unverified` says
 so in its name.
@@ -69,7 +69,7 @@ let config = RunnerConfig::default()
 
 | Field | Default | Why |
 |---|---|---|
-| `proving` | `ProvingOptions::default()` — no kind imposed | follow the backend's default rather than impose one |
+| `proving` | `ProvingOptions::default()` - no kind imposed | follow the backend's default rather than impose one |
 | `verify_after_prove` | `false` | verification is not free; bulk provers should not pay twice |
 | `artifacts` | `ArtifactPolicy::InMemory` | the library does not choose paths or write files on your behalf |
 | `telemetry.spans_enabled` | `true` | spans carry backend and program identity only |
@@ -77,7 +77,7 @@ let config = RunnerConfig::default()
 | `telemetry.log_guest_input` | `false` | **this is the private witness** |
 
 `RunnerConfig::development()` only turns on `verify_after_prove`. Despite the
-name it enables **no insecure mode** — there is no configuration in this library
+name it enables **no insecure mode** - there is no configuration in this library
 that weakens verification.
 
 `RunnerConfig` is `#[non_exhaustive]`, so new options are not breaking changes
@@ -96,7 +96,7 @@ let proof = runner.prove_with(&program, &input, &opts)?;
 
 `FallbackPolicy::Deny` is the default: if the requested kind is unavailable you
 get `UnsupportedProofKind` rather than a silent downgrade. A downgrade changes
-proof size, verification cost and on-chain compatibility — all things a caller
+proof size, verification cost and on-chain compatibility - all things a caller
 chose deliberately when they named a kind. `FallbackPolicy::AllowNative` opts
 into falling back to the backend's native proof.
 
@@ -120,7 +120,7 @@ what each backend actually claims.
 ## Aggregation
 
 `ProofAggregator` is blanket-implemented for every `BackendAdapter` and gated on
-`CapabilitySet::AGGREGATION`, which no shipped backend sets — so `aggregate()`
+`CapabilitySet::AGGREGATION`, which no shipped backend sets - so `aggregate()`
 returns `UnsupportedCapability`. It also rejects an empty set and refuses to mix
 backends. Read [aggregation.md](aggregation.md) before designing around it.
 
@@ -145,7 +145,7 @@ The abstraction covers the portable part. When you need something
 backend-specific, reach through:
 
 ```rust
-let sdk_specific = runner.backend();   // &B — the concrete adapter
+let sdk_specific = runner.backend();   // &B - the concrete adapter
 ```
 
 This is intentional, and it is better than the alternative of bloating the
@@ -155,13 +155,13 @@ visible.
 
 ## Static vs dynamic dispatch
 
-`ZkHostRunner<B>` is generic, so the normal path is monomorphized — no vtable,
+`ZkHostRunner<B>` is generic, so the normal path is monomorphized - no vtable,
 full inlining, and the concrete adapter's inherent methods (like
 `Sp1Backend::build_program`) remain reachable through `runner.backend()`.
 
 When the backend is chosen at runtime, use `DynBackend = Box<dyn BackendAdapter>`;
 core provides a `BackendAdapter` impl for the boxed form, so
-`ZkHostRunner<DynBackend>` works with no changes. You lose inherent methods —
+`ZkHostRunner<DynBackend>` works with no changes. You lose inherent methods - 
 you get the trait surface only. Rationale in
 [adr/ADR-007-backend-selection.md](adr/ADR-007-backend-selection.md).
 

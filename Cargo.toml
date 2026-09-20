@@ -7,6 +7,11 @@ members = [
     "crates/unified-zkvm-macros",
     "crates/unified-zkvm-mock",
     "crates/unified-zkvm",
+    # Backend adapters. These pull large proving SDKs, so a cold build is slow,
+    # but they are full workspace members: `cargo test --workspace` covers them.
+    # Build prerequisites are documented in docs/troubleshooting.md.
+    "crates/unified-zkvm-sp1",
+    "crates/unified-zkvm-risc0",
     "tests",
     "xtask",
     "examples/fibonacci",
@@ -16,12 +21,6 @@ members = [
     "examples/proof-verification",
 ]
 exclude = [
-    # Backend adapters are excluded from the default workspace on purpose.
-    # Each pulls a multi-hundred-crate proving SDK and (for guest builds) a
-    # vendor toolchain. They are built explicitly via `xtask backend-check`
-    # or the backend CI jobs. See docs/backend-compatibility.md.
-    "crates/unified-zkvm-sp1",
-    "crates/unified-zkvm-risc0",
     "examples/fibonacci/guest",
     "examples/sha256/guest",
 ]
@@ -31,8 +30,8 @@ version = "0.1.0"
 edition = "2021"
 rust-version = "1.85"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/unified-zkvm/unified-zkvm"
-homepage = "https://github.com/unified-zkvm/unified-zkvm"
+repository = "https://github.com/AminMemariani/unified-zkvm"
+homepage = "https://github.com/AminMemariani/unified-zkvm"
 authors = ["unified-zkvm contributors"]
 keywords = ["zkvm", "zero-knowledge", "zk", "cryptography", "riscv"]
 categories = ["cryptography", "development-tools"]

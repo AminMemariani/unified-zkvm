@@ -8,8 +8,8 @@
 //! want `#![no_main]`). Without a macro, every guest would carry a `#[cfg]`
 //! ladder for something that has nothing to do with the application.
 //!
-//! Everything else this crate could plausibly generate — typed I/O wrappers,
-//! builder sugar — is better as ordinary functions, which produce better error
+//! Everything else this crate could plausibly generate - typed I/O wrappers,
+//! builder sugar - is better as ordinary functions, which produce better error
 //! messages and can be read without understanding proc-macro expansion.
 //!
 //! # What it generates
@@ -37,9 +37,9 @@ use syn::{parse_macro_input, ItemFn};
 /// The function body is left untouched. The macro renames it and emits the
 /// backend's entrypoint invocation:
 ///
-/// * **SP1** — `sp1_zkvm::entrypoint!(__unified_zkvm_guest_main);`
-/// * **RISC Zero** — `risc0_zkvm::guest::entry!(__unified_zkvm_guest_main);`
-/// * **no backend** — a plain `fn main()` calling through, so the guest runs as
+/// * **SP1** - `sp1_zkvm::entrypoint!(__unified_zkvm_guest_main);`
+/// * **RISC Zero** - `risc0_zkvm::guest::entry!(__unified_zkvm_guest_main);`
+/// * **no backend** - a plain `fn main()` calling through, so the guest runs as
 ///   an ordinary binary under `cargo run` and `cargo test`.
 ///
 /// The `#![no_main]` attribute is **not** emitted, because an inner attribute

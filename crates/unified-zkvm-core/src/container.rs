@@ -5,7 +5,7 @@
 //! Each SDK has its own save/load convention, and several have none. A proof
 //! that cannot be handed to another process is not much use, and "just
 //! `bincode` the struct" would tie the file format to a dependency's internal
-//! encoding choices — a silent breaking change every time that dependency
+//! encoding choices - a silent breaking change every time that dependency
 //! bumps.
 //!
 //! The container is deliberately thin. It adds a self-identifying header and
@@ -29,7 +29,7 @@
 //!
 //! Every header field is validated before the body is touched, and the declared
 //! length is checked against both [`MAX_CONTAINER_BODY_BYTES`] and the bytes
-//! actually present. Loading a container performs **no verification** — it
+//! actually present. Loading a container performs **no verification** - it
 //! returns an unverified [`ZkProof`], and the caller must still verify it.
 
 use alloc::format;

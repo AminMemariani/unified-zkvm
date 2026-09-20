@@ -1,7 +1,7 @@
 //! The **verifier** side of the trust boundary.
 //!
 //! This process loads a `.uzkvm` container produced by `prover` and verifies
-//! it. It deliberately does **not** re-run the computation — it never even
+//! it. It deliberately does **not** re-run the computation - it never even
 //! registers the guest function. That is the entire point of a proof: the
 //! verifier learns the result is correct without doing the work.
 //!
@@ -54,7 +54,7 @@ fn main() -> Result<()> {
     println!();
     println!("  this process never computed a Fibonacci number; it only");
     println!("  checked the proof. NOTE: the mock backend is NOT cryptographic");
-    println!("  — with a real backend this check carries a soundness guarantee.");
+    println!(" - with a real backend this check carries a soundness guarantee.");
 
     Ok(())
 }

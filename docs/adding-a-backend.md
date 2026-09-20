@@ -4,7 +4,7 @@ A new adapter is welcome. It is also a security-relevant contribution: an
 adapter is the code that decides whether a proof is accepted. This page is the
 contract.
 
-## Step 1 — reserve the `BackendId`
+## Step 1 - reserve the `BackendId`
 
 `BackendId` discriminants are **written to disk** inside proof containers and
 must never be reused or renumbered. Currently taken: Mock=0, Sp1=1, Risc0=2,
@@ -13,11 +13,11 @@ Jolt=3, OpenVm=4, Pico=5. Add a new backend with a new number, then update:
 - the enum and `BackendId::ALL`
 - `feature_name()`
 - `is_cryptographic()`
-- `integration_status()` — start at `Planned`
-- `from_u16()` — it must keep failing closed for unknown values
+- `integration_status()` - start at `Planned`
+- `from_u16()` - it must keep failing closed for unknown values
 - `Display`
 
-## Step 2 — create the adapter crate
+## Step 2 - create the adapter crate
 
 `crates/unified-zkvm-<backend>/`, with its own `[workspace]` table so it is
 independent, and add it to the root `Cargo.toml` `exclude` list. Adapters stay
@@ -30,7 +30,7 @@ enable, with the reason. Precedent worth copying: the RISC Zero adapter uses
 `default-features = false` specifically so the `bonsai` feature cannot silently
 route proving to a remote service when environment variables happen to be set.
 
-## Step 3 — implement `BackendAdapter`
+## Step 3 - implement `BackendAdapter`
 
 ```rust
 pub trait BackendAdapter: Send + Sync {
@@ -48,7 +48,7 @@ pub trait BackendAdapter: Send + Sync {
 ```
 
 Plus an inherent `build_program(&self, elf_bytes: &[u8]) -> Result<ProgramArtifact, ZkVmError>`
-and `supported_proof_kinds() -> [ProofKind; N]` with the **default kind first** —
+and `supported_proof_kinds() -> [ProofKind; N]` with the **default kind first** - 
 `ProvingOptions::resolve_kind` treats the first entry as the default.
 
 ### The capability honesty rule
@@ -64,7 +64,7 @@ Follow the existing adapters: SP1 and RISC Zero claim exactly
 `MINIMUM_VIABLE | CYCLE_METRICS | COMPRESSION`, and deliberately do **not**
 claim `AGGREGATION`, `RECURSION`, `ONCHAIN_PROOF` or any `*_ACCEL` bit, each for
 a documented reason. Write the same kind of comment in your adapter, and add a
-unit test asserting the negative claims — both existing adapters have one.
+unit test asserting the negative claims - both existing adapters have one.
 
 ### Program identity must be the thing the verifier binds to
 
@@ -104,10 +104,10 @@ fails, and the expensive path stays off the error route.
 
 The returned `VerificationWitness` is what lets a caller read the proof's public
 values, so minting one is a security-critical act: return it **only** after both
-the binding check and the SDK verifier have succeeded. Minting it early — or on
-an error path — silently converts unchecked proofs into trusted ones for every
+the binding check and the SDK verifier have succeeded. Minting it early - or on
+an error path - silently converts unchecked proofs into trusted ones for every
 downstream consumer. Never "verify" by recomputing something
-you produced yourself — that is what the mock backend does, and it is why the
+you produced yourself - that is what the mock backend does, and it is why the
 mock is quarantined by three independent guards.
 
 ### Input framing
@@ -122,10 +122,10 @@ postcard framing. Do not double-encode.
 Map SDK failures into `ZkVmError::backend(backend, Operation, Stage, source)`
 with accurate `Operation` (`Setup`/`Execute`/`Prove`/`Verify`) and `Stage`
 (`BackendSetup`/`GuestExecution`/`ProofGeneration`/`Conversion`). A verification
-failure is `ZkVmError::VerificationFailed`, not a generic backend error — callers
+failure is `ZkVmError::VerificationFailed`, not a generic backend error - callers
 branch on that difference.
 
-## Step 4 — guest runtime (if needed)
+## Step 4 - guest runtime (if needed)
 
 If the backend needs a guest-side runtime, add a feature to
 `unified-zkvm-guest` and a `GuestRuntime` impl, and extend the `#[entrypoint]`
@@ -133,7 +133,7 @@ macro with the backend's entrypoint ritual. Keep the no-backend fallback intact:
 with no feature selected the guest must still compile and run as a plain binary,
 because that is what makes guest logic testable without a toolchain.
 
-## Step 5 — tests required
+## Step 5 - tests required
 
 | Test | Where | Required |
 |---|---|---|
@@ -148,7 +148,7 @@ End-to-end tests are `#[ignore]`d because they need the vendor toolchain and a
 real guest ELF; they run in the backend CI job. Take an ELF path from an
 environment variable, as the RISC Zero adapter does with `UZKVM_RISC0_TEST_ELF`.
 
-## Step 6 — documentation required
+## Step 6 - documentation required
 
 A PR adding a backend is incomplete without:
 
@@ -162,7 +162,7 @@ A PR adding a backend is incomplete without:
 - a `CHANGELOG.md` entry
 - crate-level rustdoc explaining what the adapter does *not* claim
 
-## Step 7 — promote the status honestly
+## Step 7 - promote the status honestly
 
 `Planned` → `Supported` when the adapter compiles against a pinned SDK and unit
 tests pass. `Supported` → `Stable` only when end-to-end proving runs in CI on a

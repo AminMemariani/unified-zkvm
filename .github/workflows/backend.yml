@@ -1,33 +1,65 @@
-# Backend adapter CI.
+# End-to-end proving tests.
 #
-# crates/unified-zkvm-sp1 and crates/unified-zkvm-risc0 are deliberately EXCLUDED
-# from the default workspace: they pull in very large proving SDKs and require
-# vendor toolchains (sp1up / rzup). They are therefore never built via
-# `--all-features` on the workspace; they get their own jobs here instead.
+# Ordinary adapter tests (program identity, capability honesty, proof-kind
+# resolution, binding rejection) run in the main CI workflow, because the
+# adapters are full workspace members.
 #
-# These jobs only type-check the adapters. Real proving tests need the vendor
-# toolchains, which are not installed in CI.
-name: Backends
+# What runs HERE is the part that cannot run there: the `#[ignore]`d tests that
+# generate and verify a real proof. Those need a vendor toolchain rustup does
+# not install (`sp1up`, `rzup`) and a compiled guest ELF, and a single proof can
+# take minutes of CPU. So this is scheduled and manual, never per-PR.
+#
+# Until the guest-ELF build step below is implemented, this workflow verifies
+# the toolchains install and the adapters build against them. It does not yet
+# prove end-to-end. That gap is tracked in ROADMAP.md and stated plainly in
+# docs/backend-compatibility.md rather than papered over with a green check.
+
+name: Backend end-to-end
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 6 * * 1'
+    # Weekly, Monday 04:00 UTC. Catches upstream SDK drift.
+    - cron: "0 4 * * 1"
 
 env:
   CARGO_TERM_COLOR: always
+  RISC0_SKIP_BUILD_KERNELS: "1"
 
 jobs:
-  check:
-    name: check ${{ matrix.backend }}
+  sp1:
+    name: SP1 toolchain
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        backend: [sp1, risc0]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - run: cargo check --all-targets
-        working-directory: crates/unified-zkvm-${{ matrix.backend }}
+      - uses: arduino/setup-protoc@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: install the SP1 toolchain
+        run: |
+          curl -L https://sp1up.succinct.xyz | bash
+          echo "$HOME/.sp1/bin" >> "$GITHUB_PATH"
+      - name: install succinct toolchain
+        run: sp1up
+      - run: cargo test -p unified-zkvm-sp1
+      # TODO(roadmap): build a guest ELF with `cargo prove build`, then run the
+      # ignored end-to-end test against it.
+
+  risc0:
+    name: RISC Zero toolchain
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: install rzup
+        run: |
+          curl -L https://risczero.com/install | bash
+          echo "$HOME/.risc0/bin" >> "$GITHUB_PATH"
+      - name: install the risc0 toolchain
+        run: rzup install
+      - run: cargo test -p unified-zkvm-risc0
+      # The ignored end-to-end test reads its ELF path from
+      # UZKVM_RISC0_TEST_ELF; wire that up once the guest build step exists.

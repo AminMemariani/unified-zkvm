@@ -4,7 +4,7 @@
 //!
 //! 1. Write the guest logic as a **plain Rust function** ([`uzkvm_test_support::fibonacci`]).
 //! 2. Register it with a backend and build a program artifact.
-//! 3. `prove` on the host, then `verify` — only after verification are the
+//! 3. `prove` on the host, then `verify` - only after verification are the
 //!    public values trustworthy.
 //!
 //! The point of step 1 is that the business logic is an ordinary function, so
@@ -73,7 +73,7 @@ fn main() -> Result<()> {
 mod tests {
     use super::*;
 
-    /// Test the business logic *outside* the zkVM — the whole reason the guest
+    /// Test the business logic *outside* the zkVM - the whole reason the guest
     /// body is a plain function.
     #[test]
     fn guest_logic_matches_known_values() {

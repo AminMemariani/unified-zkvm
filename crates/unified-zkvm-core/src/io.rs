@@ -7,7 +7,7 @@
 //! RISC Zero has its own word-oriented `serde` implementation; OpenVM works in
 //! field elements. If unified-zkvm simply forwarded a Rust struct to whichever
 //! SDK was active, then *the same struct would arrive with different bytes on
-//! different backends* — and a guest reading a fixed-size array or relying on
+//! different backends* - and a guest reading a fixed-size array or relying on
 //! field order would behave differently per backend. That failure is silent and
 //! extremely hard to debug, and it would make the project's central promise
 //! false.
@@ -45,7 +45,7 @@
 //! # Why postcard
 //!
 //! It is `no_std`-friendly, has no padding or alignment surprises, and encodes
-//! deterministically — the same value always produces the same bytes, which is
+//! deterministically - the same value always produces the same bytes, which is
 //! a prerequisite for the golden test vectors in `tests/vectors/`.
 
 use alloc::string::ToString;
@@ -59,7 +59,7 @@ use crate::error::ZkVmError;
 /// Current canonical encoding version.
 ///
 /// Bumping this is a breaking change for guests: a host encoding v2 and a guest
-/// decoding v1 must fail loudly, which it does — see [`ZkMessage::decode`].
+/// decoding v1 must fail loudly, which it does - see [`ZkMessage::decode`].
 pub const ENCODING_VERSION: u16 = 1;
 
 /// Magic bytes prefixing every framed message.

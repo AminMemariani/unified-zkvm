@@ -14,7 +14,7 @@ Applications choose a backend in two different ways, and both are legitimate:
   and CLI utilities need to choose at runtime, sometimes per request.
 
 Optimising only for the first makes a benchmark harness awkward. Optimising only
-for the second imposes a vtable on every application — inside a library where
+for the second imposes a vtable on every application - inside a library where
 the surrounding operation is measured in seconds of proving, but where losing
 concrete adapter methods is a real ergonomic loss.
 
@@ -33,7 +33,7 @@ impl<B: BackendAdapter> ZkHostRunner<B> { /* ... */ }
 ```
 
 Monomorphized, no vtable, and the concrete adapter stays reachable through
-`runner.backend() -> &B` — which is how inherent methods like
+`runner.backend() -> &B` - which is how inherent methods like
 `Sp1Backend::build_program` and `supported_proof_kinds()` remain usable.
 
 ### Dynamic (opt-in)
@@ -51,7 +51,7 @@ a type annotation, not a different API.
 Each backend has a cargo feature (`BackendId::feature_name()`). Adapters are
 separate crates, so enabling a backend is a dependency decision.
 `unified_zkvm::available_backends()` returns only backends whose feature is
-enabled **and** whose adapter exists — and asking for an absent one yields
+enabled **and** whose adapter exists - and asking for an absent one yields
 `ZkVmError::BackendNotEnabled`, which is deliberately clearer than a confusing
 import error.
 
@@ -78,7 +78,7 @@ the set of options.
   migration guide.
 - Generic `ZkHostRunner<B>` appears in user type signatures, which is more
   verbose than an opaque type would be.
-- Monomorphization duplicates code per backend — irrelevant against an SDK's
+- Monomorphization duplicates code per backend - irrelevant against an SDK's
   size, but real.
 - Compiling several adapters into one binary pulls several full SDK trees, with
   the build time that implies.
@@ -96,7 +96,7 @@ adds global mutable state, defers errors to runtime, and makes it unclear from a
 build which backends are present.
 
 **An enum of all backends.** Nice ergonomics, but core would have to depend on
-every adapter — inverting the dependency direction ADR-001 establishes and
+every adapter - inverting the dependency direction ADR-001 establishes and
 forcing every user to compile every SDK.
 
 **Environment-variable selection.** Convenient and dangerous: proving backend is

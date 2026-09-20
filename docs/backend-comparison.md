@@ -3,7 +3,7 @@
 **This page contains no performance rankings and no recommendation.** Proving
 performance depends on the workload, the hardware, the proof kind and the
 precompiles in use, and this project has not published measurements. What
-follows is documented technical fact and integration status — the things that
+follows is documented technical fact and integration status - the things that
 are true regardless of benchmark.
 
 For why numbers are absent, see [benchmarks.md](benchmarks.md).
@@ -13,12 +13,12 @@ For why numbers are absent, see [benchmarks.md](benchmarks.md).
 | | SP1 | RISC Zero | OpenVM | Jolt | Pico |
 |---|---|---|---|---|---|
 | Vendor | Succinct | RISC Zero | OpenVM | a16z | Brevis |
-| Pinned / latest known | `sp1-sdk 6.8.0` | `risc0-zkvm 3.0.6` | `2.0.2` | `v0.3.0-alpha` | — |
+| Pinned / latest known | `sp1-sdk 6.8.0` | `risc0-zkvm 3.0.6` | `2.0.2` | `v0.3.0-alpha` | - |
 | On crates.io | yes | yes | yes | **no** (git only) | **no** (git only) |
 | Adapter here | supported | supported | planned | planned | planned |
 | `BackendId` | 1 | 2 | 4 | 3 | 5 |
 | Guest toolchain | `sp1up` | `rzup` | vendor | vendor | vendor |
-| Upstream MSRV | 1.88 | — | 1.91.1 | 1.95 (alpha tag) | — |
+| Upstream MSRV | 1.88 | - | 1.91.1 | 1.95 (alpha tag) | - |
 
 Note for anyone searching crates.io: **`pico-sdk` is an unrelated PicoScope
 oscilloscope driver**, not Brevis Pico. And there is no `risc0-zkvm` 5.0.0; the
@@ -36,7 +36,7 @@ not adopt one vendor's vocabulary for all backends:
 | `Onchain` | Groth16 / Plonk | Groth16 |
 
 Both adapters here expose `[Native, Compressed]`, default first. `Onchain` is
-*not* claimed by either adapter — the SNARK-wrapping path needs vendor artifacts
+*not* claimed by either adapter - the SNARK-wrapping path needs vendor artifacts
 these adapters neither download nor test.
 
 ## Program identity
@@ -57,8 +57,8 @@ the binding check meaningless. See
 |---|---|---|
 | Sync API | `blocking` feature; panics inside a Tokio runtime | client API |
 | Host build prerequisite | `protoc` | Metal Toolchain or `RISC0_SKIP_BUILD_KERNELS=1` (macOS) |
-| Non-default feature required | `blocking` | `prove` — else `default_prover()` panics at runtime |
-| Remote-proving risk | — | `bonsai` can route proving remotely from env vars; disabled via `default-features = false` |
+| Non-default feature required | `blocking` | `prove` - else `default_prover()` panics at runtime |
+| Remote-proving risk | - | `bonsai` can route proving remotely from env vars; disabled via `default-features = false` |
 | Input framing used here | `SP1Stdin::write_slice` ↔ guest `read_vec()` | receipt/env API |
 | Proof serialization here | bincode | bincode |
 
@@ -79,7 +79,7 @@ sketch: [aggregation.md](aggregation.md).
 Both projects ship patched crates selected through the guest manifest's
 `[patch.crates-io]`. The sets differ, so the manifest is backend-specific even
 when the guest source is not. No adapter here claims an `*_ACCEL` capability,
-because none has been verified end to end — see [crypto.md](crypto.md).
+because none has been verified end to end - see [crypto.md](crypto.md).
 
 ## Maturity of the *upstream* projects
 

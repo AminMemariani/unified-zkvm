@@ -12,7 +12,7 @@ take as few dependencies as possible, and justify each one.
    opt-in feature that adds `std::error::Error` impls and filesystem proof
    save/load.
 3. **`default-features = false` everywhere**, with features re-enabled
-   deliberately. This is not tidiness — it is how the RISC Zero adapter prevents
+   deliberately. This is not tidiness - it is how the RISC Zero adapter prevents
    `bonsai` from silently routing proving to a remote service.
 4. **The guest crate takes no host-side dependencies.** No async runtime, no
    HTTP client, no filesystem client. The manifest says so in a comment.
@@ -22,7 +22,7 @@ take as few dependencies as possible, and justify each one.
 6. **SDK versions are pinned exactly**, so an upstream release cannot change
    proving behaviour without a visible manifest change.
 7. **No git dependencies in published crates.** This is why Jolt and Pico have
-   no adapter — neither is on crates.io.
+   no adapter - neither is on crates.io.
 
 ## Core's direct dependencies
 
@@ -30,7 +30,7 @@ take as few dependencies as possible, and justify each one.
 |---|---|---|
 | `serde` | the Rust serialization interface; users already derive it | writing a competing derive would make every user type incompatible with the ecosystem |
 | `postcard` | the canonical wire codec: compact, deterministic, `no_std`, stable format | a bespoke codec means writing *and maintaining* a spec, a fuzzer and a security story for zero gain |
-| `bitflags` | `CapabilitySet` | hand-rolled bit constants lose type safety, `Debug`, iteration and set algebra — see ADR-005 |
+| `bitflags` | `CapabilitySet` | hand-rolled bit constants lose type safety, `Debug`, iteration and set algebra - see ADR-005 |
 | `sha2` | program/proof digests, guest `sha256` | implementing a hash yourself in a security-relevant crate is the classic own-goal; `sha2` is also the crate backends *patch* for precompiles, which is exactly why it must be `sha2` and not a private copy |
 
 That last column matters for `sha2`: using it by name is what lets a guest's
@@ -51,7 +51,7 @@ Dev-only: `proptest` (property tests), `hex` (golden vectors), `criterion`
 
 ## Why `thiserror` is not in core
 
-The workspace declares `thiserror 2.0` and it is available — but
+The workspace declares `thiserror 2.0` and it is available - but
 `unified-zkvm-core`'s error type does **not** use it. `ZkVmError` implements
 `Display` by hand and gates `std::error::Error` behind the `std` feature.
 
@@ -83,7 +83,7 @@ configured.
 
 Two name-confusion hazards worth repeating: **`pico-sdk` on crates.io is an
 unrelated PicoScope oscilloscope driver**, not Brevis Pico; and there is no
-`risc0-zkvm` 5.0.0 — the stable line is 3.0.x.
+`risc0-zkvm` 5.0.0 - the stable line is 3.0.x.
 
 ## Related
 

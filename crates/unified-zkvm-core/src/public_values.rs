@@ -134,7 +134,7 @@ impl PublicValues {
     /// # Security
     ///
     /// This digest is for comparison and logging. It is **not** the commitment
-    /// a backend's verifier checks — each backend has its own construction.
+    /// a backend's verifier checks - each backend has its own construction.
     #[must_use]
     pub fn digest(&self) -> [u8; 32] {
         let mut h = Sha256::new();

@@ -10,7 +10,7 @@ broad.
 | Implementation | What it is | Cost |
 |---|---|---|
 | **Portable** | ordinary Rust (`sha2`) compiled to RISC-V and proven instruction by instruction | high, proportional to the circuit work |
-| **Accelerated** | a backend precompile: the zkVM has a dedicated circuit for the primitive, invoked by syscall | dramatically lower — but backend-specific |
+| **Accelerated** | a backend precompile: the zkVM has a dedicated circuit for the primitive, invoked by syscall | dramatically lower - but backend-specific |
 
 `CryptoSupport` reports which one you get:
 
@@ -32,7 +32,7 @@ Acceleration is **not a host setting and not a runtime switch**. It is a *build*
 decision made in the guest crate's manifest:
 
 ```toml
-# In the GUEST crate's Cargo.toml — illustrative, consult your backend's docs
+# In the GUEST crate's Cargo.toml - illustrative, consult your backend's docs
 [patch.crates-io]
 sha2 = { git = "...", tag = "..." }   # backend-patched sha2
 ```
@@ -58,12 +58,12 @@ pub fn sha256_parts(parts: &[&[u8]]) -> [u8; 32]
 ```
 
 `unified_zkvm_guest::sha256` delegates to `unified_zkvm_core::crypto::sha256`,
-so the workspace holds exactly one SHA-256 implementation — and a precompile
+so the workspace holds exactly one SHA-256 implementation - and a precompile
 substitutes itself underneath it through `[patch.crates-io]`. There is no
 `#[cfg]` ladder in the guest API, because there does not need to be.
 
 `sha256_parts` hashes several slices as if concatenated without materialising
-the concatenation — in a guest, that means avoiding an allocation and the cycles
+the concatenation - in a guest, that means avoiding an allocation and the cycles
 to copy it.
 
 > **Security note.** `sha256_parts` is plain concatenation with **no domain
@@ -85,7 +85,7 @@ it. A portable software Keccak is so expensive to prove that shipping one would
 be a trap rather than a feature: it would work in tests, pass review, and then
 cost a fortune in cycles in production. Wiring the real precompiles
 (`risc0-circuit-keccak`, SP1's keccak syscall) requires guest-side toolchain
-support this crate does not yet verify — and shipping an unaccelerated fallback
+support this crate does not yet verify - and shipping an unaccelerated fallback
 under an accelerated-looking name would violate the project rule that a
 capability bit means a tested implementation.
 
@@ -106,11 +106,11 @@ guest today means using backend-specific patched crates directly.
 
 The cheapest cryptography in a guest is the cryptography you do not do there.
 Before hashing inside the proof, ask whether the hash could be computed on the
-host and *committed* as a public value instead — the guest only needs to prove
+host and *committed* as a public value instead - the guest only needs to prove
 the parts whose correctness is actually in question.
 
 ## Related
 
-- [backend-compatibility.md](backend-compatibility.md) — which bits are set
+- [backend-compatibility.md](backend-compatibility.md) - which bits are set
 - [guest-guide.md](guest-guide.md)
-- [benchmarks.md](benchmarks.md) — why no numbers are published yet
+- [benchmarks.md](benchmarks.md) - why no numbers are published yet

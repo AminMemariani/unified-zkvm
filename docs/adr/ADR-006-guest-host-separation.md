@@ -10,7 +10,7 @@ Guest and host code have opposite constraints.
 
 A guest runs inside the zkVM: no operating system, no threads, no async
 executor, no network, no filesystem. Critically, **every instruction it executes
-must be proven**, so a dependency is not merely disk space — it is proving time
+must be proven**, so a dependency is not merely disk space - it is proving time
 and money.
 
 A host is an ordinary program: it wants `std`, file I/O, `tracing`, possibly an
@@ -22,14 +22,14 @@ apart is the design problem.
 
 The other half of the problem is testability. If guest logic can only run inside
 a zkVM, then testing a business rule means building an ELF with a vendor
-toolchain and generating a proof — turning a millisecond unit test into a
+toolchain and generating a proof - turning a millisecond unit test into a
 multi-minute ordeal. Teams respond by not testing.
 
 ## Decision
 
 1. **Separate crates**: `unified-zkvm-guest` and `unified-zkvm-host`, both
    depending on `unified-zkvm-core`.
-2. **The guest crate takes no host-side dependencies** — no async runtime, no
+2. **The guest crate takes no host-side dependencies** - no async runtime, no
    HTTP client, no filesystem client. Stated as a rule in its manifest.
 3. **Core is `no_std + alloc`** with `std` as an additive feature, so the same
    proof and message types exist on both sides.
@@ -40,7 +40,7 @@ multi-minute ordeal. Teams respond by not testing.
    provides `set_input`, `take_output` and `reset`, so guest code runs under
    plain `cargo test`.
 6. **`#[entrypoint]` emits the backend's ritual**, or a plain `fn main()` when no
-   backend is selected — so a guest file is also an ordinary binary.
+   backend is selected - so a guest file is also an ordinary binary.
 7. **The guide teaches the pattern**: pure business logic in functions, a
    three-line I/O shell in the entrypoint.
 
@@ -52,7 +52,7 @@ multi-minute ordeal. Teams respond by not testing.
   the single biggest developer-experience win in the project.
 - The portability harness runs the *real* guest function through the mock
   backend, so a passing test means the whole encode → transport → decode →
-  commit → verify → decode path is lossless — not that two stubs agreed.
+  commit → verify → decode path is lossless - not that two stubs agreed.
 - Host machinery cannot accidentally enter a guest build; it is not reachable.
 - Guests stay small, and small guests prove faster.
 - One shared core means a proof means the same thing on both sides.
@@ -78,7 +78,7 @@ multi-minute ordeal. Teams respond by not testing.
 dependency declarations, and `no_std` correctness would rest on feature
 discipline alone.
 
-**Guest code calls SDK APIs directly.** No abstraction to maintain — and no
+**Guest code calls SDK APIs directly.** No abstraction to maintain - and no
 portability, plus guest logic that cannot be tested without a toolchain.
 
 **Mocking the zkVM with a trait object at runtime.** Dynamic dispatch and a

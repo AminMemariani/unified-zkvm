@@ -58,7 +58,7 @@ fn main() -> Result<()> {
     println!("  proof size   : {} bytes", proof.size_bytes());
     println!();
     println!("  NOTE: the proof carries a *claimed* digest. It is only");
-    println!("  trustworthy AFTER `verify` succeeds — never decode");
+    println!("  trustworthy AFTER `verify` succeeds - never decode");
     println!("  `public_values_unverified()` and act on it.");
     println!();
 
@@ -68,7 +68,7 @@ fn main() -> Result<()> {
     // Independent host-side cross-check: the guest and the host must agree.
     let host_digest = sha256(&message);
     if output.digest != host_digest || output.len != message.len() as u64 {
-        bail!("guest digest disagreed with the host-side sha256 — this is a bug");
+        bail!("guest digest disagreed with the host-side sha256 - this is a bug");
     }
 
     println!("  verified ✓");

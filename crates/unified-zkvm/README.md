@@ -98,7 +98,7 @@ flowchart TD
 ```
 
 Dependencies point one way: adapters depend on core, core depends on nobody.
-Details in [docs/architecture.md](docs/architecture.md).
+Details in [docs/architecture.md](https://github.com/AminMemariani/unified-zkvm/blob/main/docs/architecture.md).
 
 ## Why not just use an SDK directly?
 
@@ -130,7 +130,7 @@ unified-zkvm makes the portable part portable and names the rest.
 | Pico | planned | - | - | - | no adapter; git-only (the crates.io name `pico-sdk` is an unrelated oscilloscope driver) |
 
 Full matrix, pinned versions and prerequisites:
-[docs/backend-compatibility.md](docs/backend-compatibility.md).
+[docs/backend-compatibility.md](https://github.com/AminMemariani/unified-zkvm/blob/main/docs/backend-compatibility.md).
 
 ## Install
 
@@ -140,8 +140,8 @@ unified-zkvm = "0.1"
 ```
 
 The default features give you the host API and the mock backend, so the crate is
-usable with no proving SDK installed. Backend adapters are separate crates, so
-you only pay for the multi-hundred-crate proving SDK you actually use:
+usable with no proving SDK installed. Backend adapters are separate crates
+outside the default workspace because each pulls a multi-hundred-crate SDK:
 
 ```toml
 unified-zkvm-sp1 = "0.1"     # requires `protoc` on the host
@@ -174,7 +174,7 @@ It does not mean every guest runs unchanged everywhere.
   `[patch.crates-io]`. No adapter here currently claims any `*_ACCEL`
   capability, because none has been verified end to end. `keccak256()` returns
   `UnsupportedCapability` rather than silently proving an expensive software
-  implementation. See [docs/crypto.md](docs/crypto.md).
+  implementation. See [docs/crypto.md](https://github.com/AminMemariani/unified-zkvm/blob/main/docs/crypto.md).
 - **Proof formats are not interchangeable.** A proof is a backend-native
   artifact. unified-zkvm gives it a common envelope; it does not make an SP1
   proof verifiable by RISC Zero.
@@ -185,7 +185,7 @@ It does not mean every guest runs unchanged everywhere.
   normalizes that, and no benchmark numbers are published yet.
 - **Aggregation is unavailable.** Neither pinned SDK exposes a host-level
   `aggregate(&[proof]) -> proof`. `aggregate()` returns
-  `UnsupportedCapability`. See [docs/aggregation.md](docs/aggregation.md).
+  `UnsupportedCapability`. See [docs/aggregation.md](https://github.com/AminMemariani/unified-zkvm/blob/main/docs/aggregation.md).
 - **The abstraction can lag upstream.** Adapters pin exact SDK versions; a new
   upstream feature is unavailable until an adapter implements and tests it.
 
@@ -204,7 +204,7 @@ witness - or public values unless explicitly enabled.
 
 **unified-zkvm is an abstraction layer. It does not independently make an
 underlying zkVM cryptographically secure.** Full threat model:
-[docs/security-model.md](docs/security-model.md).
+[docs/security-model.md](https://github.com/AminMemariani/unified-zkvm/blob/main/docs/security-model.md).
 
 ## Testing
 
@@ -214,23 +214,15 @@ The whole workspace tests with no zkVM installed:
 cargo test --workspace
 ```
 
-That runs 175 tests across every crate, including both backend adapters: unit
-tests for core, guest, host and mock; cross-backend portability tests against a
-native reference model; negative-security tests (tampered proofs, wrong program
-identity, hostile length prefixes); property-based serialization tests;
-`compile_fail` tests proving you cannot claim a proof is verified without
-verifying it; and golden vectors that pin the exact wire bytes.
+That runs 168 tests: unit tests across core, guest, host and mock; cross-backend
+portability tests against a native reference model; negative-security tests
+(tampered proofs, wrong program identity, hostile length prefixes); property-based
+serialization tests; `compile_fail` tests proving you cannot claim a proof is
+verified without verifying it; and golden vectors that pin the exact wire bytes.
 
-The first run compiles both proving SDKs and takes a while; after that it is
-fast. One prerequisite is not automatic: the SP1 SDK needs `protoc` on your PATH
-(`brew install protobuf`, or your distribution's `protobuf-compiler`). The RISC
-Zero GPU-kernel requirement is handled for you by `.cargo/config.toml`.
-
-The adapters' end-to-end *proving* tests are `#[ignore]`d, because they need the
-vendor toolchains (`sp1up`, `rzup`) and a compiled guest ELF. Everything else
-about the adapters - program identity, capability honesty, proof-kind
-resolution, binding rejection - runs in the command above. See
-[CONTRIBUTING.md](CONTRIBUTING.md) for running the ignored tests.
+Backend adapters live outside the default workspace and are checked separately - 
+see [CONTRIBUTING.md](https://github.com/AminMemariani/unified-zkvm/blob/main/CONTRIBUTING.md). Their end-to-end proving tests are
+`#[ignore]`d because they need the vendor toolchains (`sp1up`, `rzup`).
 
 ## Built with unified-zkvm
 
@@ -239,10 +231,10 @@ project here - an empty list beats a fictional one.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), [GOVERNANCE.md](GOVERNANCE.md) and
+See [CONTRIBUTING.md](https://github.com/AminMemariani/unified-zkvm/blob/main/CONTRIBUTING.md), [GOVERNANCE.md](GOVERNANCE.md) and
 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Adding a backend has its own contract:
-[docs/adding-a-backend.md](docs/adding-a-backend.md). Security issues go through
-[SECURITY.md](SECURITY.md) - privately, first.
+[docs/adding-a-backend.md](https://github.com/AminMemariani/unified-zkvm/blob/main/docs/adding-a-backend.md). Security issues go through
+[SECURITY.md](https://github.com/AminMemariani/unified-zkvm/blob/main/SECURITY.md) - privately, first.
 
 ## License
 

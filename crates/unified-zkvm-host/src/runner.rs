@@ -1,4 +1,4 @@
-//! [`ZkHostRunner`] — the primary host API.
+//! [`ZkHostRunner`] - the primary host API.
 
 use serde::Serialize;
 use tracing::{debug, instrument};
@@ -83,8 +83,8 @@ impl<B: BackendAdapter> ZkHostRunner<B> {
     /// # Portability
     ///
     /// This is the **escape hatch**. Backend adapters expose inherent methods
-    /// for functionality that has no portable equivalent — SP1's network
-    /// prover, RISC Zero's assumption composition — and this is how you reach
+    /// for functionality that has no portable equivalent - SP1's network
+    /// prover, RISC Zero's assumption composition - and this is how you reach
     /// them. Code that calls through here is no longer backend-portable, which
     /// is a fine trade when you need the feature; just make it a deliberate one
     /// rather than an accident. See `docs/host-guide.md`.
@@ -188,7 +188,7 @@ impl<B: BackendAdapter> ZkHostRunner<B> {
     /// [`VerifiedPublicValues`].
     ///
     /// Note the signature **requires** the program. There is deliberately no
-    /// `verify(&proof)` overload that infers identity from the proof itself —
+    /// `verify(&proof)` overload that infers identity from the proof itself -
     /// that would check a proof against whatever program the proof claims,
     /// which is no check at all.
     ///
@@ -310,7 +310,7 @@ impl<B: BackendAdapter> ZkHostRunnerBuilder<B> {
     /// # Errors
     ///
     /// Returns [`ZkVmError::Configuration`] if no backend was set, or if the
-    /// backend cannot satisfy [`CapabilitySet::MINIMUM_VIABLE`] — catching a
+    /// backend cannot satisfy [`CapabilitySet::MINIMUM_VIABLE`] - catching a
     /// broken adapter at construction rather than at the first prove call.
     pub fn build(self) -> Result<ZkHostRunner<B>, ZkVmError> {
         let backend = self.backend.ok_or_else(|| ZkVmError::Configuration {

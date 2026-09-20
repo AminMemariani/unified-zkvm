@@ -56,7 +56,7 @@ dependency; `integration_status()` reports the truth.
 
 - Dependency isolation is total: not using a backend means not compiling it.
 - SDK versions are pinned per adapter and bumped independently.
-- A new backend is an additive change — no core modification beyond an enum
+- A new backend is an additive change - no core modification beyond an enum
   variant.
 - Adapters are individually auditable, which matters because they are the code
   that accepts proofs.
@@ -64,8 +64,11 @@ dependency; `integration_status()` reports the truth.
 
 ### Negative
 
-- **Excluded crates miss the default `cargo check`**; a core change can break an
-  adapter silently until backend CI runs.
+- ~~**Excluded crates miss the default `cargo check`**; a core change can break
+  an adapter silently until backend CI runs.~~ Resolved in 0.1.0: the adapters
+  are workspace members and a core change that breaks one fails immediately. See
+  the amendment to [ADR-001](ADR-001-workspace-architecture.md). Crate
+  *isolation*, which is what this ADR is actually about, is unchanged.
 - More crates to publish, version and release in order.
 - Some duplication across adapters (bincode handling, error mapping, `Instant`
   timing). Accepted: premature sharing here would push backend specifics into a

@@ -1,0 +1,21 @@
+# Workspace-local cargo configuration.
+#
+# This file exists so that a fresh clone can run:
+#
+#     cargo test --workspace
+#
+# without the contributor first discovering an undocumented environment
+# variable. It applies only to builds run from inside this repository.
+
+[env]
+# The RISC Zero adapter pulls `risc0-build-kernel`, whose build script compiles
+# GPU kernels. On macOS that requires the Xcode Metal Toolchain, a multi-gigabyte
+# component most contributors have not installed, and its absence is a hard build
+# failure rather than a graceful skip.
+#
+# Skipping kernel compilation disables GPU acceleration only. CPU proving, which
+# is what the adapter's tests exercise, is unaffected.
+#
+# `force = false` means an explicitly exported value wins, so anyone who *has*
+# the Metal toolchain can opt back in with RISC0_SKIP_BUILD_KERNELS=0.
+RISC0_SKIP_BUILD_KERNELS = { value = "1", force = false }

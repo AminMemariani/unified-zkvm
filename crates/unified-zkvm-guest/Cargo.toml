@@ -12,7 +12,7 @@ keywords.workspace = true
 categories.workspace = true
 
 # NOTE: this crate must stay free of host-side dependencies. No tokio, no
-# reqwest, no filesystem clients — a guest program links this and every byte
+# reqwest, no filesystem clients - a guest program links this and every byte
 # costs proving cycles. See docs/guest-guide.md.
 [dependencies]
 unified-zkvm-core = { workspace = true, default-features = false }

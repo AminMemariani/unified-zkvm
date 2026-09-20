@@ -7,7 +7,7 @@
 //! make them portable at the cryptographic layer. The bytes inside
 //! [`ZkProof::proof_bytes`] are a backend-native artifact; an SP1 proof will
 //! never verify under a RISC Zero verifier, and this module never pretends
-//! otherwise — [`ZkProof::verify_binding`] rejects a cross-backend attempt
+//! otherwise - [`ZkProof::verify_binding`] rejects a cross-backend attempt
 //! before any verifier is invoked.
 //!
 //! # Verification before trust
@@ -43,7 +43,7 @@ pub const MAX_PROOF_BYTES: usize = 512 * 1024 * 1024;
 ///
 /// These names describe *verification and size characteristics*, which is what
 /// a consumer actually needs to choose between them. The mapping to each
-/// vendor's terminology is documented in `docs/backend-compatibility.md` — this
+/// vendor's terminology is documented in `docs/backend-compatibility.md` - this
 /// enum deliberately does not adopt one vendor's vocabulary for all backends.
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[non_exhaustive]
@@ -62,7 +62,7 @@ pub enum ProofKind {
     Onchain,
     /// A proof attesting to the validity of several other proofs.
     ///
-    /// Genuine recursive aggregation only — never a concatenation. See
+    /// Genuine recursive aggregation only - never a concatenation. See
     /// `docs/aggregation.md`.
     Aggregated,
     /// **Not a proof.** Produced only by the development mock backend.
@@ -91,7 +91,7 @@ impl fmt::Display for ProofKind {
 /// What to do when the requested [`ProofKind`] is unavailable.
 ///
 /// The default is [`Self::Deny`] because a silent downgrade changes proof size,
-/// verification cost and on-chain compatibility — all things a caller chose
+/// verification cost and on-chain compatibility - all things a caller chose
 /// deliberately when they asked for a specific kind.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub enum FallbackPolicy {
@@ -128,7 +128,7 @@ pub struct ProvingOptions {
     /// cheaply"*. That is not the same as [`ProofKind::Native`]: the mock
     /// backend's default is [`ProofKind::Mock`], and a backend added later may
     /// have a different one again. Asking for `Native` explicitly is a real
-    /// request that an incompatible backend must refuse — so conflating the two
+    /// request that an incompatible backend must refuse - so conflating the two
     /// would either break portable defaults or smuggle in a silent substitution.
     pub kind: Option<ProofKind>,
     /// What to do if `kind` is unsupported.
@@ -279,7 +279,7 @@ impl ProofMetadata {
 ///
 /// A `ZkProof` always carries the [`ProgramId`] it was generated for. There is
 /// no constructor that omits it, which is what makes
-/// [`Self::verify_binding`] possible at all — the common mistake of verifying a
+/// [`Self::verify_binding`] possible at all - the common mistake of verifying a
 /// proof against an implicit or attacker-supplied program cannot be expressed.
 #[derive(Clone, PartialEq, Serialize, Deserialize)]
 pub struct ZkProof {
@@ -300,7 +300,7 @@ impl ZkProof {
     ///
     /// Returns [`ZkVmError::SizeLimitExceeded`] if the payload exceeds
     /// [`MAX_PROOF_BYTES`], or [`ZkVmError::InvalidProof`] if `program_id`
-    /// belongs to a different backend than `backend` — a mismatch that would
+    /// belongs to a different backend than `backend` - a mismatch that would
     /// otherwise produce an envelope that can never verify.
     pub fn new(
         backend: BackendId,
@@ -432,7 +432,7 @@ impl ZkProof {
     ///
     /// A [`VerificationWitness`] can only be minted by
     /// [`VerificationWitness::new`], which is callable solely from inside a
-    /// [`BackendAdapter::verify`] implementation — the trait is sealed, so the
+    /// [`BackendAdapter::verify`] implementation - the trait is sealed, so the
     /// set of types that can produce one is closed to this workspace's
     /// adapters. That makes "verification happened" a *structural* requirement
     /// rather than a convention a caller could skip.
@@ -465,7 +465,7 @@ impl ZkProof {
     ///
     /// # Security
     ///
-    /// An identifier for deduplication and logging — **not** a substitute for
+    /// An identifier for deduplication and logging - **not** a substitute for
     /// verification. Equal digests mean equal bytes, nothing more.
     #[must_use]
     pub fn digest(&self) -> [u8; 32] {
@@ -601,7 +601,7 @@ impl VerifiedPublicValues {
     /// # Errors
     ///
     /// Returns [`ZkVmError::Serialization`] if the guest's committed bytes do
-    /// not match `T` — typically a host/guest type mismatch, not an attack,
+    /// not match `T` - typically a host/guest type mismatch, not an attack,
     /// since the bytes are already proven.
     pub fn decode<T: DeserializeOwned>(&self) -> Result<T, ZkVmError> {
         self.values.decode_unverified()

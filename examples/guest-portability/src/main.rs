@@ -1,7 +1,7 @@
 //! **One guest function, many backends.**
 //!
 //! This is the centrepiece example. The application logic lives in exactly one
-//! place — [`compute`] — and every backend path below calls *that same
+//! place - [`compute`] - and every backend path below calls *that same
 //! function*. Nothing in `compute` knows or cares which proving system is
 //! underneath; switching backends changes the adapter you construct, not a
 //! single line of business logic.
@@ -18,7 +18,7 @@
 //! # Honesty rule
 //!
 //! Only a backend that **actually ran and matched** gets a `✓`. Backends whose
-//! adapter is not compiled into this build print `–` and the reason. A report
+//! adapter is not compiled into this build print `-` and the reason. A report
 //! that green-checks a backend that never executed is worse than no report.
 //!
 //! Run it:
@@ -79,12 +79,12 @@ fn main() -> Result<()> {
         note: format!("{} proof, {} bytes", proof.kind(), proof.size_bytes()),
     });
 
-    // (c) SP1 — compiled in only with `--features sp1`, which additionally
+    // (c) SP1 - compiled in only with `--features sp1`, which additionally
     // requires the excluded `unified-zkvm-sp1` adapter crate and `protoc`.
     #[cfg(feature = "sp1")]
     {
         // The application code below is byte-for-byte the mock path except for
-        // the adapter constructor — that is the entire portability claim.
+        // the adapter constructor - that is the entire portability claim.
         //
         //   let backend = unified_zkvm_sp1::Sp1Backend::new();
         //   let program = backend.build_program(SP1_GUEST_ELF)?;
@@ -103,7 +103,7 @@ fn main() -> Result<()> {
         note: "adapter not compiled in (feature `sp1`)".to_string(),
     });
 
-    // (d) RISC Zero — same story; needs `RISC0_SKIP_BUILD_KERNELS=1` on macOS.
+    // (d) RISC Zero - same story; needs `RISC0_SKIP_BUILD_KERNELS=1` on macOS.
     #[cfg(feature = "risc0")]
     {
         //   let backend = unified_zkvm_risc0::Risc0Backend::new();
@@ -148,16 +148,16 @@ fn main() -> Result<()> {
                     row.note
                 );
             }
-            None => println!("  {:<12} {:<4} {:<16} {}", row.backend, "–", "-", row.note),
+            None => println!("  {:<12} {:<4} {:<16} {}", row.backend, "-", "-", row.note),
         }
     }
 
     println!();
     println!("  backends that actually participated: {}", ran.join(", "));
     if mismatch {
-        bail!("backend outputs disagreed — portability is broken");
+        bail!("backend outputs disagreed - portability is broken");
     }
-    println!("  all participating backends agree. Absent backends are marked `–`,");
+    println!("  all participating backends agree. Absent backends are marked `-`,");
     println!("  never checked: a report must not claim a run that never happened.");
 
     Ok(())

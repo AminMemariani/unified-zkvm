@@ -2,7 +2,9 @@
 
 ## Status
 
-Accepted.
+Accepted, and **amended in 0.1.0** before first release: the adapter crates were
+promoted from `exclude` to full workspace members. See
+[Amendment](#amendment-adapters-became-workspace-members) at the end.
 
 ## Context
 
@@ -18,7 +20,7 @@ Both must agree exactly on proof types, program identity and wire encoding. A
 single crate would force guests to link host machinery; entirely separate
 codebases would let the two sides' understanding of a proof drift apart.
 
-Additionally, each proving SDK is enormous — a multi-hundred-crate dependency
+Additionally, each proving SDK is enormous - a multi-hundred-crate dependency
 tree, plus a vendor toolchain for guest builds that rustup does not install. If
 those trees sit in the default workspace, `cargo test` on a clean checkout
 becomes a multi-minute, prerequisite-laden ordeal, and the project stops being
@@ -64,7 +66,8 @@ Rules:
 
 - **Excluded crates are not covered by the default `cargo check`.** A core API
   change can break an adapter while the main test run stays green. Mitigated by
-  the backend CI job — not by hope. This is the sharpest cost of the design.
+  the backend CI job - not by hope. This is the sharpest cost of the design.
+  *(Resolved by the amendment below.)*
 - Six crates plus adapters means more manifests, more version coordination, and
   a release process with an order to it.
 - Contributors must learn which crate a change belongs in.
@@ -84,3 +87,37 @@ than automatic coverage of two crates that CI can cover explicitly.
 
 **Guest and host in one crate, core separate.** Retains the leakage problem the
 split exists to solve.
+
+## Amendment: adapters became workspace members
+
+**Date.** 0.1.0, before first publication.
+
+The original decision put `unified-zkvm-sp1` and `unified-zkvm-risc0` in the
+workspace `exclude` list, trading automatic coverage for a fast, dependency-free
+`cargo test --workspace`. The "Negative" section above named the cost honestly:
+a core API change could break an adapter while the main test run stayed green.
+
+That cost turned out to be the wrong one to accept. This project's entire claim
+is that one abstraction fits more than one backend, and the adapters are the
+only evidence for it. Leaving the evidence out of the default test run made the
+central claim the least-tested thing in the repository.
+
+**Amended decision.** Both adapters are full workspace members. `cargo test
+--workspace` now covers 175 tests, including both.
+
+**What this costs, stated plainly.** The default test run compiles two proving
+SDKs, so a cold build takes minutes instead of seconds, and it needs `protoc` on
+the host for SP1. Contributors working on the abstraction alone can select
+crates with `-p` and skip both; that path is documented in CONTRIBUTING.md and
+is what the fast CI gate runs.
+
+**What this does not change.** Adapter *crate* separation is untouched, and that
+was always the part that mattered for users: enabling SP1 still never compiles
+RISC Zero, and each SDK upgrades independently. Workspace membership governs our
+test coverage; crate boundaries govern downstream build cost. Conflating the two
+is what produced the original mistake.
+
+**Discovered while amending.** Both proving SDKs resolve in a single dependency
+graph with no feature-unification conflict, so the `compile_error!` guard
+contemplated for mutually-incompatible backends is not needed today. If a future
+backend does conflict, the guard goes in then, with a real conflict to point at.

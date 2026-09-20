@@ -63,7 +63,7 @@ at 16, operational concerns at 32. Room to grow per group without renumbering.
 **The honesty rule, which is the actual point of this ADR: a bit is set only if
 the adapter implements it and a test exercises it.** Not "the SDK supports it".
 Both real adapters claim exactly `MINIMUM_VIABLE | CYCLE_METRICS | COMPRESSION`,
-and each has a unit test asserting the *negative* claims — that `AGGREGATION`,
+and each has a unit test asserting the *negative* claims - that `AGGREGATION`,
 `RECURSION`, `ONCHAIN_PROOF` and the `*_ACCEL` bits are unset.
 
 ## Consequences
@@ -75,7 +75,7 @@ and each has a unit test asserting the *negative* claims — that `AGGREGATION`,
 - `require_capability` gates every runner operation before any backend work, so
   failures are early and cheap.
 - Adding a capability is additive; no adapter breaks.
-- Compact and cheap — a `u64` copy, usable in a `no_std` guest.
+- Compact and cheap - a `u64` copy, usable in a `no_std` guest.
 - Negative-claim tests make dishonest capabilities a test failure rather than a
   review opinion.
 
@@ -86,7 +86,7 @@ and each has a unit test asserting the *negative* claims — that `AGGREGATION`,
   review checklist and the negative tests. This is a real limitation, not a
   solved problem.
 - 64 bits is a ceiling. The grouped layout delays it, and crossing it would need
-  a second word — a breaking change.
+  a second word - a breaking change.
 - Capabilities are per-adapter and static, so they cannot express "accelerated
   *if* the guest was built with the right patches". That is exactly why no
   `*_ACCEL` bit is set today: the host genuinely cannot know.

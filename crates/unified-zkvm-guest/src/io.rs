@@ -18,7 +18,7 @@ use crate::runtime::{ActiveRuntime, GuestRuntime};
 ///
 /// Returns [`ZkVmError::Serialization`] if the host wrote a value that does not
 /// decode into `T`, or [`ZkVmError::UnsupportedVersion`] if the host uses a
-/// newer encoding than this guest was built against — a real hazard when a
+/// newer encoding than this guest was built against - a real hazard when a
 /// guest ELF is cached and the host is upgraded.
 ///
 /// ```
@@ -35,7 +35,7 @@ pub fn zk_read<T: DeserializeOwned>() -> Result<T, ZkVmError> {
 
 /// Reads a raw blob supplied by the host, unframed.
 ///
-/// Use when the guest handles bytes directly — hashing a payload, say — and no
+/// Use when the guest handles bytes directly - hashing a payload, say - and no
 /// typed structure is involved.
 ///
 /// # Errors
@@ -52,7 +52,7 @@ pub fn zk_read_bytes() -> Result<Vec<u8>, ZkVmError> {
 ///
 /// Committed values are public: they appear in the proof and are readable by
 /// anyone who holds it. Never commit a secret input or an intermediate value
-/// derived from one — the whole point of the private witness is that it stays
+/// derived from one - the whole point of the private witness is that it stays
 /// out of here.
 ///
 /// # Errors

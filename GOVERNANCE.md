@@ -41,7 +41,7 @@ recorded in the ADR.
 Security reports are handled privately per [SECURITY.md](SECURITY.md) by
 maintainers only. A fix may be merged and released before public discussion. Any
 change that weakens a verification guarantee requires unanimous maintainer
-agreement and a documented rationale — this is the one place where speed does
+agreement and a documented rationale - this is the one place where speed does
 not win.
 
 ## Capability claims

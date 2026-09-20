@@ -19,7 +19,7 @@ use unified_zkvm_core::{
 use unified_zkvm_host::ZkHostRunner;
 use unified_zkvm_mock::MockBackend;
 
-/// Reference Fibonacci — the shared computation every backend must reproduce.
+/// Reference Fibonacci - the shared computation every backend must reproduce.
 ///
 /// Duplicated here rather than pulled from the test-support crate so that
 /// `xtask` has no dependency on the test package; the values it produces are
@@ -129,7 +129,7 @@ fn portability_test() -> Result<()> {
                     println!("  {name:<10} ✗  fib({N}) = {value}  (expected {expected})");
                 }
             }
-            Outcome::Absent(reason) => println!("  {name:<10} –  {reason}"),
+            Outcome::Absent(reason) => println!("  {name:<10} -  {reason}"),
         }
     }
 
@@ -208,7 +208,7 @@ fn backend_check(run: bool) -> Result<()> {
         let name = adapter.feature;
         println!("  {name}:");
         for prereq in adapter.prerequisites {
-            println!("    prerequisite: {}  — {}", prereq.name, prereq.detail);
+            println!("    prerequisite: {} - {}", prereq.name, prereq.detail);
         }
 
         let needs_kernel_skip = name == "risc0";
@@ -293,7 +293,7 @@ fn capabilities() -> Result<()> {
     }
 
     println!();
-    println!("  sp1    –  adapter not compiled in (feature `sp1`)");
-    println!("  risc0  –  adapter not compiled in (feature `risc0`)");
+    println!("  sp1    -  adapter not compiled in (feature `sp1`)");
+    println!("  risc0  -  adapter not compiled in (feature `risc0`)");
     Ok(())
 }

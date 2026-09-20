@@ -12,7 +12,7 @@
 //! | **Aggregation** | One proof attesting to *N independent* proofs | One proof, N programs |
 //!
 //! Only the last is [`ProofAggregator`]. Putting several proofs in a `Vec` is
-//! batching at best and is **not** implemented here under an aggregation name —
+//! batching at best and is **not** implemented here under an aggregation name -
 //! doing so would let a caller believe they had constant-size verification when
 //! they had linear-size verification.
 //!
@@ -20,8 +20,8 @@
 //!
 //! Research against the pinned SDKs found that neither SP1 6.8.0 nor RISC Zero
 //! 3.0.6 exposes a host-level `aggregate(&[proof]) -> proof`. Both provide the
-//! *ingredients* — SP1's in-guest `verify_sp1_proof` plus
-//! `SP1Stdin::write_proof`, RISC Zero's `add_assumption` plus `env::verify` —
+//! *ingredients* - SP1's in-guest `verify_sp1_proof` plus
+//! `SP1Stdin::write_proof`, RISC Zero's `add_assumption` plus `env::verify` -
 //! but assembling them requires **a dedicated aggregation guest program
 //! compiled for the specific set of proofs being folded**. That program is
 //! application-specific, so a generic adapter cannot supply it.

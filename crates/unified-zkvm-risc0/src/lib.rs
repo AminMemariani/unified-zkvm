@@ -31,7 +31,7 @@
 //!
 //! * `prove` is **not** a default feature of `risc0-zkvm`. Without it,
 //!   `default_prover()` resolves an external `r0vm` binary and panics at runtime
-//!   when it is missing — a failure that looks like a bug in this adapter.
+//!   when it is missing - a failure that looks like a bug in this adapter.
 //! * `default-features = false` is deliberate: the default `bonsai` feature
 //!   silently routes proving to a remote service when `BONSAI_API_URL` and
 //!   `BONSAI_API_KEY` are set. Proving must not leave the machine by accident.
@@ -45,8 +45,8 @@ use risc0_zkvm::{compute_image_id, default_prover, ExecutorEnv, ProverOpts, Rece
 
 use unified_zkvm_core::{
     BackendAdapter, BackendId, CapabilitySet, ExecutionResult, Operation, ProgramArtifact,
-    ProgramId, ProofKind, ProofMetadata, ProvingOptions, VerificationWitness, PublicValues, ResourceUsage, Stage,
-    ZkProof, ZkVmError,
+    ProgramId, ProofKind, ProofMetadata, ProvingOptions, PublicValues, ResourceUsage, Stage,
+    VerificationWitness, ZkProof, ZkVmError,
 };
 
 /// The `risc0-zkvm` release this adapter is written and tested against.
@@ -93,7 +93,7 @@ impl Risc0Backend {
         Self { _private: () }
     }
 
-    /// Derives the program artifact — including RISC Zero's real image ID —
+    /// Derives the program artifact - including RISC Zero's real image ID -
     /// from guest ELF bytes.
     ///
     /// The image ID is what a receipt is verified against, so binding our
@@ -171,9 +171,7 @@ impl BackendAdapter for Risc0Backend {
         // Exactly the bits this adapter implements: no aggregation, no
         // recursion, no acceleration claims, and no on-chain proof until the
         // Groth16 path is wired and tested.
-        CapabilitySet::MINIMUM_VIABLE
-            | CapabilitySet::CYCLE_METRICS
-            | CapabilitySet::COMPRESSION
+        CapabilitySet::MINIMUM_VIABLE | CapabilitySet::CYCLE_METRICS | CapabilitySet::COMPRESSION
     }
 
     fn execute(
@@ -216,7 +214,8 @@ impl BackendAdapter for Risc0Backend {
         input: &[u8],
         options: &ProvingOptions,
     ) -> Result<ZkProof, ZkVmError> {
-        let kind = options.resolve_kind(BackendId::Risc0, &Risc0Backend::supported_proof_kinds())?;
+        let kind =
+            options.resolve_kind(BackendId::Risc0, &Risc0Backend::supported_proof_kinds())?;
         let opts = match kind {
             ProofKind::Compressed => ProverOpts::succinct(),
             _ => ProverOpts::composite(),

@@ -13,7 +13,7 @@
 //! on its own runtime, and a future async variant can be added alongside
 //! without disturbing this one.
 //!
-//! No network prover ships today — see `ROADMAP.md`. This is the seam, not a
+//! No network prover ships today - see `ROADMAP.md`. This is the seam, not a
 //! claim that the feature exists.
 
 use unified_zkvm_core::{BackendAdapter, ProgramArtifact, ProvingOptions, ZkProof, ZkVmError};
@@ -21,7 +21,7 @@ use unified_zkvm_core::{BackendAdapter, ProgramArtifact, ProvingOptions, ZkProof
 /// Everything needed to produce one proof.
 ///
 /// Bundled into a struct rather than passed as loose arguments so that a
-/// request can be queued, logged or sent over a wire — the shapes a remote
+/// request can be queued, logged or sent over a wire - the shapes a remote
 /// prover needs.
 #[derive(Debug, Clone)]
 pub struct ProofRequest<'a> {
@@ -32,7 +32,7 @@ pub struct ProofRequest<'a> {
     /// # Security
     ///
     /// This is the **private witness**. Do not log it, and do not transmit it
-    /// to a remote prover you would not trust with the underlying secret —
+    /// to a remote prover you would not trust with the underlying secret -
     /// delegated proving necessarily reveals the witness to the prover.
     pub input: &'a [u8],
     /// Options controlling the proof produced.
@@ -55,7 +55,7 @@ pub trait Prover {
     /// Whether proving happens off this machine.
     ///
     /// Callers use this to decide whether the private witness is about to leave
-    /// the host — a fact worth surfacing to a user before it happens.
+    /// the host - a fact worth surfacing to a user before it happens.
     fn is_remote(&self) -> bool {
         false
     }

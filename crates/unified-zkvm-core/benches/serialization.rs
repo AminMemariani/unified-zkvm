@@ -1,13 +1,13 @@
 //! Serialization benchmarks for the canonical codec.
 //!
-//! # What these numbers mean — and what they do not
+//! # What these numbers mean - and what they do not
 //!
 //! These benchmarks measure **the abstraction layer's overhead only**: framing,
 //! encoding, decoding and digesting. They do **not** measure zkVM proving time,
 //! which is orders of magnitude larger and entirely backend-specific. A
 //! microsecond saved here is invisible next to a proof that takes seconds to
 //! minutes. The reason to track them at all is to catch a regression that would
-//! make the abstraction itself a bottleneck — not to compare backends.
+//! make the abstraction itself a bottleneck - not to compare backends.
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use serde::{Deserialize, Serialize};

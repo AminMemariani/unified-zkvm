@@ -11,7 +11,7 @@
 //! A capability bit means **"this adapter implements this, and a test proves
 //! it"**. It does not mean "the upstream project could theoretically do this".
 //! In particular, an acceleration bit such as [`Capability::Sha256Accel`] must
-//! only be set when a backend *precompile or syscall* is used — never when a
+//! only be set when a backend *precompile or syscall* is used - never when a
 //! software fallback is silently substituted, because the proving-cost
 //! difference is orders of magnitude. Use [`crate::crypto`] to report the
 //! distinction.

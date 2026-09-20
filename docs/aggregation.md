@@ -16,7 +16,7 @@ These terms get used interchangeably and mean very different things:
 | **Composition** | a proof that consumes another proof's output as an assumption | a dependency chain |
 
 Only *aggregation* is what `ProofAggregator` promises. Putting several proofs in
-a `Vec` is batching at best — offering it under an aggregation name would let a
+a `Vec` is batching at best - offering it under an aggregation name would let a
 caller believe they had constant-size verification when they had linear-size
 verification. That mistake is invisible until the on-chain gas bill arrives.
 
@@ -41,7 +41,7 @@ satisfy this and must not be offered here.
 
 The blanket impl over `BackendAdapter` enforces three things before any backend
 work: the `AGGREGATION` capability must be set, `proofs` must be non-empty, and
-every proof's backend must match the adapter's. Mixing backends is meaningless —
+every proof's backend must match the adapter's. Mixing backends is meaningless - 
 no verifier can check both halves.
 
 ## Why no backend implements it
@@ -56,7 +56,7 @@ Research against the pinned SDKs found that **neither SP1 6.8.0 nor RISC Zero
 | RISC Zero | host-side `env::add_assumption`, plus in-guest `env::verify` |
 
 Assembling them requires **a dedicated aggregation guest program, compiled for
-the specific set of proofs being folded** — it must know the verification keys /
+the specific set of proofs being folded** - it must know the verification keys /
 image IDs it is folding and what the aggregated public values mean. That program
 is application-specific, so a *generic* adapter cannot supply it. An adapter
 that tried would have to invent an application's semantics, and would get them
@@ -83,7 +83,7 @@ flowchart LR
 
 Sketch of the work, SP1 flavour:
 
-1. Prove each leaf with `ProofKind::Compressed` — SP1's in-guest verification
+1. Prove each leaf with `ProofKind::Compressed` - SP1's in-guest verification
    requires compressed input proofs.
 2. Write an aggregation guest that calls `verify_sp1_proof` once per leaf,
    checks the leaves' public values against whatever your application requires,
@@ -96,8 +96,8 @@ RISC Zero flavour: add each leaf receipt as an assumption with
 resolve step discharge the assumptions.
 
 Then wrap the result back into a `ZkProof` via `ZkProof::new(...)` with
-`ProofKind::Aggregated` so the rest of your system — container persistence,
-verification binding, telemetry — keeps working normally.
+`ProofKind::Aggregated` so the rest of your system - container persistence,
+verification binding, telemetry - keeps working normally.
 
 **Do not** set `CapabilitySet::AGGREGATION` on a general-purpose adapter to make
 this work. If you build an aggregation-specific adapter for your application,

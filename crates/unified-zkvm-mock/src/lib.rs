@@ -1,4 +1,4 @@
-//! # ⚠️ DEVELOPMENT ONLY — THIS BACKEND PRODUCES NO PROOFS ⚠️
+//! # ⚠️ DEVELOPMENT ONLY - THIS BACKEND PRODUCES NO PROOFS ⚠️
 //!
 //! [`MockBackend`] exists so that API wiring, serialization, capability gating
 //! and error handling can be tested in milliseconds, without a proving SDK or a
@@ -21,8 +21,8 @@
 //!    [`ZkProof::verify_binding`] rejects it against any real program.
 //! 3. Real adapters reject a foreign backend before invoking their verifier.
 //!
-//! A mock proof therefore cannot be smuggled past an SP1 or RISC Zero verifier
-//! — not because it would fail their cryptography, but because it never reaches
+//! A mock proof therefore cannot be smuggled past an SP1 or RISC Zero verifier.
+//! Not because it would fail their cryptography, but because it never reaches
 //! it.
 //!
 //! ```
@@ -75,7 +75,7 @@ pub struct MockBackend {
 }
 
 // Grants this adapter the right to mint a `VerificationWitness`. The trait is
-// sealed upstream, so only adapters can do this — application code cannot
+// sealed upstream, so only adapters can do this - application code cannot
 // manufacture "this was verified".
 unified_zkvm_core::impl_verifier_identity!(MockBackend);
 
@@ -148,7 +148,7 @@ impl MockBackend {
 
     /// Builds a program artifact from guest bytes.
     ///
-    /// The identity is a domain-separated digest of the bytes — deterministic,
+    /// The identity is a domain-separated digest of the bytes - deterministic,
     /// so the same guest always yields the same [`ProgramId`].
     ///
     /// # Errors
@@ -277,7 +277,7 @@ impl BackendAdapter for MockBackend {
         // Reached only after both checks pass.
         //
         // The checksum above is keyless and trivially forgeable by design, so
-        // this witness attests that the *mock* accepted the artifact — not that
+        // this witness attests that the *mock* accepted the artifact - not that
         // anything was cryptographically proven.
         Ok(VerificationWitness::new(self))
     }

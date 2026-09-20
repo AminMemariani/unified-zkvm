@@ -53,7 +53,7 @@ fn sample_orders() -> Vec<Order> {
             ],
             memo: Some("typed round trip".to_string()),
         },
-        // `memo: None` and an empty `Vec` — the edge cases that a sloppy
+        // `memo: None` and an empty `Vec` - the edge cases that a sloppy
         // encoding silently mangles.
         Order {
             id: u64::MAX,

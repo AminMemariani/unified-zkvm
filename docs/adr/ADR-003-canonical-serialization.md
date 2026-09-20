@@ -9,7 +9,7 @@ Accepted.
 Host and guest must agree on bytes. Every zkVM SDK has its own convention for
 writing input and reading committed output, and those conventions differ. If the
 abstraction adopted whichever one the current backend uses, the same guest source
-would see different bytes on different backends — which would make the central
+would see different bytes on different backends - which would make the central
 portability claim false.
 
 The format must be: deterministic (identical value, identical bytes, always),
@@ -30,7 +30,7 @@ magic 0x5A 0x4B ("ZK") ‖ u16 LE version ‖ u32 LE length ‖ payload
 - little-endian throughout
 
 The API is `ZkMessage::encode`, `frame`, `parse`, `decode`. Adapters pass framed
-bytes straight through without re-encoding — SP1 uses `SP1Stdin::write_slice`,
+bytes straight through without re-encoding - SP1 uses `SP1Stdin::write_slice`,
 pairing with the guest's `read_vec()`, precisely so the SDK's serde `write` does
 not add a second encoding layer.
 
@@ -52,13 +52,13 @@ spec, a fuzzer and a security story, for no gain over postcard.
 Postcard alone gives no way to detect a truncated message, a version change, or
 a stream that is not ours. The frame adds four things a raw payload cannot:
 
-1. **Magic** — arbitrary bytes are rejected instead of misparsed.
-2. **Version** — a format change is an explicit `UnsupportedVersion` error, not
+1. **Magic** - arbitrary bytes are rejected instead of misparsed.
+2. **Version** - a format change is an explicit `UnsupportedVersion` error, not
    a best-effort parse of incompatible bytes.
-3. **Length** — truncation is detected, and the declared length is checked
+3. **Length** - truncation is detected, and the declared length is checked
    against `MAX_MESSAGE_BYTES` **before allocating**, so a hostile prefix cannot
    exhaust memory.
-4. **Self-containment** — a message can be stored or transported without
+4. **Self-containment** - a message can be stored or transported without
    out-of-band metadata.
 
 Eight bytes. In a guest, that is negligible against what it buys.
@@ -98,5 +98,5 @@ makes cross-backend golden vectors impossible.
 guest cycles spent on names and tags, on every field, in every run.
 
 **Protobuf.** Schema evolution and cross-language support, at the price of a
-code-generation step — and `protoc`, which is already a friction point for the
+code-generation step - and `protoc`, which is already a friction point for the
 SP1 adapter.
