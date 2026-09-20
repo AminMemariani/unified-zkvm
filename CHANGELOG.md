@@ -17,7 +17,8 @@ as qualified in [docs/versioning.md](docs/versioning.md).
 - Canonical serialization: postcard payload framed as magic `0x5A 0x4B` followed by u16 LE version, u32 LE length and payload; `ENCODING_VERSION` 1, `MAX_MESSAGE_BYTES` 256 MiB.
 - Proof container format: magic `UZKVMPRF`, u16 version, u16 backend, u32 body length, postcard body; `PROOF_CONTAINER_VERSION` 1, with `to_bytes`, `from_bytes`, `read_header` and std-gated `save`/`load`.
 - `ZkProof::verify_binding` checking backend match then program-ID match before any cryptographic verification.
-- `VerifiedPublicValues`, constructible only via `ZkProof::into_verified()`, so reading a guest output requires having verified it.
+- `VerifiedPublicValues`, constructible only via `ZkProof::into_verified()`, which requires a `VerificationWitness` — a zero-sized capability token that only a backend adapter can mint, on the success path of its `verify()`. Reading a trusted guest output therefore requires verification to have happened, enforced at compile time rather than by convention.
+- `VerificationWitness` and the sealed `VerifierIdentity` trait, with the `impl_verifier_identity!` macro that lets adapter crates opt in.
 - `unified-zkvm-guest`: `zk_read`, `zk_read_bytes`, `zk_commit`, `zk_commit_bytes`, `sha256`, `sha256_parts`, `active_backend`, and `keccak256` which returns `UnsupportedCapability` by design.
 - `GuestRuntime` trait with SP1, RISC Zero and host-test implementations; the host-test runtime makes guest logic unit-testable with plain `cargo test`.
 - `unified-zkvm-host`: `ZkHostRunner` with `execute`, `prove`, `prove_with`, `verify` and `prove_and_verify`; `ZkHostRunnerBuilder`; `Verifier`; `Prover`; `ProofAggregator`.

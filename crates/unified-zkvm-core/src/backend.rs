@@ -20,7 +20,7 @@ use serde::{Deserialize, Serialize};
 use crate::capabilities::{Capability, CapabilitySet};
 use crate::error::ZkVmError;
 use crate::program::ProgramArtifact;
-use crate::proof::{ProvingOptions, ZkProof};
+use crate::proof::{ProvingOptions, VerificationWitness, ZkProof};
 use crate::public_values::PublicValues;
 
 /// Identifies a proving backend.
@@ -264,15 +264,26 @@ pub trait BackendAdapter: Send + Sync {
     ///
     /// # Contract
     ///
-    /// Implementations **must** check that the proof's program identity matches
-    /// `program` in addition to running the cryptographic verifier. A proof of
-    /// the wrong program is a failure even when its cryptography is valid.
+    /// Implementations **must**, in this order:
+    ///
+    /// 1. call [`ZkProof::verify_binding`] — a proof of the wrong program is a
+    ///    failure even when its cryptography is valid;
+    /// 2. delegate to the backend's real cryptographic verifier;
+    /// 3. only then mint the returned [`VerificationWitness`].
+    ///
+    /// Returning a witness is what allows a caller to read the proof's public
+    /// values, so minting one on any other path silently converts an unchecked
+    /// proof into a trusted one. The witness is zero-sized and costs nothing.
     ///
     /// # Errors
     ///
     /// Returns [`ZkVmError::ProgramIdMismatch`], [`ZkVmError::BackendMismatch`]
     /// or [`ZkVmError::VerificationFailed`].
-    fn verify(&self, proof: &ZkProof, program: &ProgramArtifact) -> Result<(), ZkVmError>;
+    fn verify(
+        &self,
+        proof: &ZkProof,
+        program: &ProgramArtifact,
+    ) -> Result<VerificationWitness, ZkVmError>;
 
     /// Folds several proofs into one.
     ///
@@ -359,7 +370,11 @@ impl<T: BackendAdapter + ?Sized> BackendAdapter for alloc::boxed::Box<T> {
         (**self).prove(program, input, options)
     }
 
-    fn verify(&self, proof: &ZkProof, program: &ProgramArtifact) -> Result<(), ZkVmError> {
+    fn verify(
+        &self,
+        proof: &ZkProof,
+        program: &ProgramArtifact,
+    ) -> Result<VerificationWitness, ZkVmError> {
         (**self).verify(proof, program)
     }
 

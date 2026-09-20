@@ -40,7 +40,8 @@ pub trait BackendAdapter: Send + Sync {
         -> Result<ExecutionResult, ZkVmError>;
     fn prove(&self, program: &ProgramArtifact, input: &[u8], options: &ProvingOptions)
         -> Result<ZkProof, ZkVmError>;
-    fn verify(&self, proof: &ZkProof, program: &ProgramArtifact) -> Result<(), ZkVmError>;
+    fn verify(&self, proof: &ZkProof, program: &ProgramArtifact)
+        -> Result<VerificationWitness, ZkVmError>;
     fn aggregate(&self, _proofs: &[ZkProof]) -> Result<ZkProof, ZkVmError> { /* default: unsupported */ }
     fn backend_version(&self) -> String { /* default */ }
 }
@@ -82,15 +83,30 @@ If the identity is not what the verifier checks, the binding check is theatre.
 Order matters and is not negotiable:
 
 ```rust
-fn verify(&self, proof: &ZkProof, program: &ProgramArtifact) -> Result<(), ZkVmError> {
-    proof.verify_binding(program)?;   // backend match, then program-ID match
-    // ... decode native proof, then call the SDK's real verifier
+// Once, at the top of your crate: grants this adapter the right to attest that
+// verification happened. The underlying trait is sealed, so application code
+// can never do this.
+unified_zkvm_core::impl_verifier_identity!(MyBackend);
+
+fn verify(&self, proof: &ZkProof, program: &ProgramArtifact)
+    -> Result<VerificationWitness, ZkVmError>
+{
+    proof.verify_binding(program)?;   // 1. backend match, then program-ID match
+    // 2. decode the native proof, then call the SDK's real verifier
+    //    ...
+    // 3. ONLY on success:
+    Ok(VerificationWitness::new(self))
 }
 ```
 
 Binding first means a cryptographically valid proof of the *wrong* program still
-fails, and the expensive path stays off the error route. Never return `Ok(())`
-without the SDK's verifier having run. Never "verify" by recomputing something
+fails, and the expensive path stays off the error route.
+
+The returned `VerificationWitness` is what lets a caller read the proof's public
+values, so minting one is a security-critical act: return it **only** after both
+the binding check and the SDK verifier have succeeded. Minting it early — or on
+an error path — silently converts unchecked proofs into trusted ones for every
+downstream consumer. Never "verify" by recomputing something
 you produced yourself — that is what the mock backend does, and it is why the
 mock is quarantined by three independent guards.
 

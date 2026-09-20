@@ -67,7 +67,8 @@ pub use error::{Operation, Stage, ZkVmError};
 pub use io::{ZkMessage, ENCODING_VERSION, MAX_MESSAGE_BYTES, MESSAGE_MAGIC};
 pub use program::{ProgramArtifact, ProgramId, ProgramIdValue};
 pub use proof::{
-    FallbackPolicy, ProofKind, ProofMetadata, ProvingOptions, VerifiedPublicValues, ZkProof,
+    FallbackPolicy, ProofKind, ProofMetadata, ProvingOptions, VerificationWitness,
+    VerifiedPublicValues, VerifierIdentity, ZkProof,
 };
 pub use public_values::PublicValues;
 pub use version::{CORE_VERSION, PROOF_CONTAINER_VERSION};

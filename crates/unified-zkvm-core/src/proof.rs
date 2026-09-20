@@ -428,13 +428,18 @@ impl ZkProof {
 
     /// Converts a verified proof into trustworthy public values.
     ///
-    /// # Contract
+    /// # Obtaining the witness
     ///
-    /// Call **only** after the backend verifier has accepted this proof. The
-    /// type is the marker that verification happened; constructing one without
-    /// verifying defeats the safeguard for every downstream consumer.
+    /// A [`VerificationWitness`] can only be minted by
+    /// [`VerificationWitness::new`], which is callable solely from inside a
+    /// [`BackendAdapter::verify`] implementation — the trait is sealed, so the
+    /// set of types that can produce one is closed to this workspace's
+    /// adapters. That makes "verification happened" a *structural* requirement
+    /// rather than a convention a caller could skip.
+    ///
+    /// [`BackendAdapter::verify`]: crate::BackendAdapter::verify
     #[must_use]
-    pub fn into_verified(self) -> VerifiedPublicValues {
+    pub fn into_verified(self, _witness: VerificationWitness) -> VerifiedPublicValues {
         VerifiedPublicValues {
             backend: self.backend,
             program_id: self.program_id,
@@ -498,11 +503,91 @@ impl fmt::Debug for ZkProof {
     }
 }
 
+/// Proof that a backend verifier accepted a proof.
+///
+/// # Why this type exists
+///
+/// Without it, [`ZkProof::into_verified`] would be a public function that
+/// *any* caller could invoke on an unchecked proof, and
+/// [`VerifiedPublicValues`] would mean "someone promised they verified this"
+/// rather than "a verifier accepted this". The distinction matters precisely
+/// when it is inconvenient: a tired engineer reaching for the ergonomic
+/// accessor must not accidentally skip verification.
+///
+/// # Construction
+///
+/// Minting a witness requires calling [`Self::new`] from a type that implements
+/// the sealed [`VerifierIdentity`] trait. Only backend adapters within this
+/// workspace implement it, so the capability cannot leak to application code.
+///
+/// The witness carries no data; it is a zero-sized capability token and costs
+/// nothing at runtime.
+#[derive(Debug)]
+pub struct VerificationWitness {
+    // Private field prevents construction via struct literal from outside.
+    _sealed: (),
+}
+
+impl VerificationWitness {
+    /// Mints a witness, attesting that a backend verifier accepted a proof.
+    ///
+    /// # Security
+    ///
+    /// Call this **only** on the success path of
+    /// [`BackendAdapter::verify`], after both
+    /// [`ZkProof::verify_binding`] and the backend's cryptographic verifier
+    /// have succeeded. Minting one on any other path silently converts an
+    /// unchecked proof into a "verified" one for every downstream consumer.
+    ///
+    /// [`BackendAdapter::verify`]: crate::BackendAdapter::verify
+    #[must_use]
+    pub fn new<V: VerifierIdentity>(_verifier: &V) -> Self {
+        Self { _sealed: () }
+    }
+}
+
+/// Marks a type permitted to attest that verification occurred.
+///
+/// Sealed: implemented only by backend adapters inside this workspace, via
+/// [`impl_verifier_identity!`](crate::impl_verifier_identity). Application code
+/// cannot implement it, which is what keeps [`VerificationWitness`] honest.
+pub trait VerifierIdentity: sealed::Sealed {}
+
+#[doc(hidden)]
+pub mod sealed {
+    /// Implementation detail of [`impl_verifier_identity`].
+    ///
+    /// Public only because the macro must name it from another crate. Not part
+    /// of the stable API: implementing it by hand rather than through the macro
+    /// is unsupported and may break without a semver bump.
+    ///
+    /// [`impl_verifier_identity`]: crate::impl_verifier_identity
+    pub trait Sealed {}
+}
+
+/// Grants a backend adapter the ability to mint a [`VerificationWitness`].
+///
+/// Invoked by each adapter for its own type. Kept as a macro so the sealed
+/// supertrait stays private while adapters in sibling crates can still opt in.
+///
+/// ```
+/// # struct MyBackend;
+/// unified_zkvm_core::impl_verifier_identity!(MyBackend);
+/// ```
+#[macro_export]
+macro_rules! impl_verifier_identity {
+    ($ty:ty) => {
+        impl $crate::proof::sealed::Sealed for $ty {}
+        impl $crate::proof::VerifierIdentity for $ty {}
+    };
+}
+
 /// Public values from a proof that has been cryptographically verified.
 ///
-/// Obtainable only via [`ZkProof::into_verified`]. Holding one is evidence that
-/// a backend verifier accepted the proof and that its program identity was
-/// checked, so decoding from here is safe to act on.
+/// Obtainable only via [`ZkProof::into_verified`], which requires a
+/// [`VerificationWitness`]. Holding one is evidence that a backend verifier
+/// accepted the proof and that its program identity was checked, so decoding
+/// from here is safe to act on.
 #[derive(Clone, Debug, PartialEq)]
 pub struct VerifiedPublicValues {
     backend: BackendId,
@@ -650,11 +735,15 @@ mod tests {
         assert_ne!(base.digest(), tampered.digest());
     }
 
+    /// Stands in for an adapter in tests that need a witness.
+    struct TestVerifier;
+    crate::impl_verifier_identity!(TestVerifier);
+
     #[test]
     fn verified_values_retain_their_program_binding() {
         let p = proof(BackendId::Mock, [5u8; 32]);
         let expected = p.program_id().clone();
-        let verified = p.into_verified();
+        let verified = p.into_verified(VerificationWitness::new(&TestVerifier));
         assert_eq!(verified.program_id(), &expected);
     }
 

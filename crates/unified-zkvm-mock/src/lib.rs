@@ -48,7 +48,8 @@ use std::time::Instant;
 use unified_zkvm_core::crypto::sha256;
 use unified_zkvm_core::{
     BackendAdapter, BackendId, CapabilitySet, ExecutionResult, ProgramArtifact, ProgramId,
-    ProofKind, ProofMetadata, ProvingOptions, PublicValues, ResourceUsage, ZkProof, ZkVmError,
+    ProofKind, ProofMetadata, ProvingOptions, PublicValues, ResourceUsage, VerificationWitness,
+    ZkProof, ZkVmError,
 };
 
 /// The guest computation a [`MockBackend`] runs.
@@ -72,6 +73,11 @@ pub struct MockBackend {
     /// verifier was actually reached rather than short-circuited earlier.
     verify_calls: Arc<Mutex<usize>>,
 }
+
+// Grants this adapter the right to mint a `VerificationWitness`. The trait is
+// sealed upstream, so only adapters can do this — application code cannot
+// manufacture "this was verified".
+unified_zkvm_core::impl_verifier_identity!(MockBackend);
 
 impl std::fmt::Debug for MockBackend {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -246,7 +252,11 @@ impl BackendAdapter for MockBackend {
         )
     }
 
-    fn verify(&self, proof: &ZkProof, program: &ProgramArtifact) -> Result<(), ZkVmError> {
+    fn verify(
+        &self,
+        proof: &ZkProof,
+        program: &ProgramArtifact,
+    ) -> Result<VerificationWitness, ZkVmError> {
         *self
             .verify_calls
             .lock()
@@ -263,7 +273,13 @@ impl BackendAdapter for MockBackend {
                 detail: Some("mock checksum mismatch".to_string()),
             });
         }
-        Ok(())
+
+        // Reached only after both checks pass.
+        //
+        // The checksum above is keyless and trivially forgeable by design, so
+        // this witness attests that the *mock* accepted the artifact — not that
+        // anything was cryptographically proven.
+        Ok(VerificationWitness::new(self))
     }
 
     fn backend_version(&self) -> String {
@@ -297,7 +313,8 @@ mod tests {
             .unwrap();
         backend.verify(&proof, &program).unwrap();
 
-        let out: u64 = proof.into_verified().decode().unwrap();
+        let witness = backend.verify(&proof, &program).unwrap();
+        let out: u64 = proof.into_verified(witness).decode().unwrap();
         assert_eq!(out, 42);
     }
 
