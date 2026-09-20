@@ -1,0 +1,19 @@
+[package]
+name = "unified-zkvm-mock"
+description = "Development-only mock backend for unified-zkvm. Produces NO cryptographic proofs."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+unified-zkvm-core = { workspace = true, features = ["std"] }
+serde = { workspace = true, features = ["std"] }
+
+[dev-dependencies]
+postcard = { workspace = true, features = ["use-std"] }

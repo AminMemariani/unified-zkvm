@@ -1,0 +1,50 @@
+[package]
+name = "unified-zkvm"
+description = "Write your zkVM application once. Choose the proving backend later. A portable Rust abstraction over SP1, RISC Zero and other zkVMs."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+readme = "../../README.md"
+
+[dependencies]
+unified-zkvm-core = { workspace = true }
+unified-zkvm-guest = { workspace = true, optional = true, default-features = false }
+unified-zkvm-host = { workspace = true, optional = true }
+unified-zkvm-macros = { workspace = true, optional = true }
+unified-zkvm-mock = { workspace = true, optional = true }
+
+[features]
+# Host-side usage with the mock backend. Enough to explore the API with
+# `cargo add unified-zkvm` and no proving SDK.
+default = ["std", "host", "mock"]
+
+std = ["unified-zkvm-core/std"]
+
+# The host API: ZkHostRunner, Verifier, proving and verification.
+host = ["dep:unified-zkvm-host", "std"]
+
+# The guest API: zk_read / zk_commit. Enable inside a guest crate.
+guest = ["dep:unified-zkvm-guest"]
+
+# The #[entrypoint] attribute macro.
+macros = ["dep:unified-zkvm-macros"]
+
+# Development-only mock backend. Produces NO cryptographic proofs.
+mock = ["dep:unified-zkvm-mock", "host"]
+
+# Backend adapters. Each pulls a large proving SDK, so none is default.
+# Enabling one on the guest side also selects that guest runtime.
+sp1 = ["unified-zkvm-guest?/sp1"]
+risc0 = ["unified-zkvm-guest?/risc0"]
+
+[package.metadata.docs.rs]
+# Document the host + guest API without any proving SDK: docs.rs cannot install
+# the vendor toolchains the backend features require.
+features = ["std", "host", "mock", "macros"]
+rustdoc-args = ["--cfg", "docsrs"]

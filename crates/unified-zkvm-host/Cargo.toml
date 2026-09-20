@@ -1,0 +1,27 @@
+[package]
+name = "unified-zkvm-host"
+description = "Host-side proving, verification and orchestration API for unified-zkvm."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+unified-zkvm-core = { workspace = true, features = ["std"] }
+serde = { workspace = true, features = ["std"] }
+tracing = { workspace = true, features = ["std", "attributes"] }
+
+[dev-dependencies]
+unified-zkvm-mock = { workspace = true }
+
+[features]
+default = []
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

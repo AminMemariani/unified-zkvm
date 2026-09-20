@@ -1,0 +1,24 @@
+# Rust build output.
+# NOT anchored with a leading slash: the SP1 and RISC Zero adapter crates are
+# excluded from the root workspace and therefore build into their OWN nested
+# target/ directories (crates/unified-zkvm-sp1/target, etc).
+target/
+**/*.rs.bk
+*.pdb
+
+# Cargo.lock IS committed: this workspace ships binaries (xtask, examples) and we
+# want reproducible builds, so it is intentionally NOT ignored here.
+
+# Fuzzing artifacts
+fuzz/target
+fuzz/corpus
+fuzz/artifacts
+
+# Generated docs
+/docs/book
+
+# Proof artifacts
+*.uzkvm
+
+# OS noise
+.DS_Store

@@ -1,0 +1,26 @@
+[package]
+name = "guest-portability-example"
+description = "One guest function, many backends: the portability claim demonstrated end to end."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+unified-zkvm-core = { workspace = true, features = ["std"] }
+unified-zkvm-host = { workspace = true }
+unified-zkvm-mock = { workspace = true }
+unified-zkvm-tests = { path = "../../tests" }
+serde = { workspace = true, features = ["std", "derive"] }
+postcard = { workspace = true, features = ["use-std"] }
+anyhow = { workspace = true }
+
+[features]
+default = []
+# Off by default, and NOT buildable from the default workspace: the SP1 and
+# RISC Zero adapter crates are excluded from `[workspace] members` because they
+# pull vendor toolchains. Enabling these features shows what those paths look
+# like; see `xtask backend-check`.
+sp1 = []
+risc0 = []

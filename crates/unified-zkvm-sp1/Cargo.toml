@@ -1,0 +1,13 @@
+[workspace]
+
+[package]
+name = "unified-zkvm-sp1"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Succinct SP1 backend adapter for unified-zkvm."
+
+[dependencies]
+unified-zkvm-core = { path = "../unified-zkvm-core", features = ["std"] }
+sp1-sdk = { version = "6.8.0", features = ["blocking"] }
+bincode = "1.3"

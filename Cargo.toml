@@ -1,0 +1,68 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/unified-zkvm-core",
+    "crates/unified-zkvm-guest",
+    "crates/unified-zkvm-host",
+    "crates/unified-zkvm-macros",
+    "crates/unified-zkvm-mock",
+    "crates/unified-zkvm",
+    "tests",
+    "xtask",
+    "examples/fibonacci",
+    "examples/sha256",
+    "examples/typed-io",
+    "examples/guest-portability",
+    "examples/proof-verification",
+]
+exclude = [
+    # Backend adapters are excluded from the default workspace on purpose.
+    # Each pulls a multi-hundred-crate proving SDK and (for guest builds) a
+    # vendor toolchain. They are built explicitly via `xtask backend-check`
+    # or the backend CI jobs. See docs/backend-compatibility.md.
+    "crates/unified-zkvm-sp1",
+    "crates/unified-zkvm-risc0",
+    "examples/fibonacci/guest",
+    "examples/sha256/guest",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/unified-zkvm/unified-zkvm"
+homepage = "https://github.com/unified-zkvm/unified-zkvm"
+authors = ["unified-zkvm contributors"]
+keywords = ["zkvm", "zero-knowledge", "zk", "cryptography", "riscv"]
+categories = ["cryptography", "development-tools"]
+
+[workspace.dependencies]
+unified-zkvm-core = { version = "0.1.0", path = "crates/unified-zkvm-core", default-features = false }
+unified-zkvm-guest = { version = "0.1.0", path = "crates/unified-zkvm-guest", default-features = false }
+unified-zkvm-host = { version = "0.1.0", path = "crates/unified-zkvm-host" }
+unified-zkvm-macros = { version = "0.1.0", path = "crates/unified-zkvm-macros" }
+unified-zkvm-mock = { version = "0.1.0", path = "crates/unified-zkvm-mock" }
+
+serde = { version = "1.0.219", default-features = false, features = ["derive"] }
+postcard = { version = "1.1.1", default-features = false, features = ["alloc"] }
+thiserror = { version = "2.0.12", default-features = false }
+bitflags = { version = "2.9.1", default-features = false }
+sha2 = { version = "0.10.9", default-features = false }
+tracing = { version = "0.1.41", default-features = false }
+
+# dev / tooling
+proptest = "1.7.0"
+hex = { version = "0.4.3", default-features = false, features = ["alloc"] }
+criterion = "0.5.1"
+anyhow = "1.0.99"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+
+# Proving is dominated by backend work; make dev-mode dependency code fast so
+# that running an integration test locally is not pathologically slow.
+[profile.dev.package."*"]
+opt-level = 2

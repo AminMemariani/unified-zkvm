@@ -1,0 +1,42 @@
+[package]
+name = "unified-zkvm-tests"
+description = "Cross-backend portability, negative-security and golden-vector tests for unified-zkvm. Not published."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[lib]
+# The reference model is a library so that both the portability harness and the
+# example guests can depend on exactly the same implementation. Comparing a
+# backend against a *copy* of the reference would defeat the purpose.
+name = "uzkvm_test_support"
+path = "portability/reference.rs"
+
+[dependencies]
+unified-zkvm-core = { workspace = true, features = ["std"] }
+unified-zkvm-host = { workspace = true }
+unified-zkvm-mock = { workspace = true }
+serde = { workspace = true, features = ["std", "derive"] }
+postcard = { workspace = true, features = ["use-std"] }
+
+[dev-dependencies]
+proptest = { workspace = true }
+hex = { workspace = true, features = ["std"] }
+
+[[test]]
+name = "portability"
+path = "portability/harness.rs"
+
+[[test]]
+name = "negative_security"
+path = "backend/negative_security.rs"
+
+[[test]]
+name = "serialization"
+path = "serialization/roundtrip.rs"
+
+[[test]]
+name = "golden_vectors"
+path = "vectors/golden.rs"

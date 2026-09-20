@@ -1,0 +1,43 @@
+name: New backend proposal
+description: Propose support for an additional zkVM proving backend.
+labels: [backend, enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: Backend adapters live outside the default workspace because their SDKs are large and need vendor toolchains.
+  - type: input
+    id: name
+    attributes:
+      label: Backend name
+    validations:
+      required: true
+  - type: input
+    id: repo
+    attributes:
+      label: Upstream repository URL
+    validations:
+      required: true
+  - type: dropdown
+    id: crates-io
+    attributes:
+      label: Is it published on crates.io?
+      options:
+        - "Yes"
+        - "No"
+        - Partially
+    validations:
+      required: true
+  - type: input
+    id: toolchain
+    attributes:
+      label: Required toolchain
+      description: Installer or target needed to build and prove (e.g. sp1up, rzup).
+    validations:
+      required: true
+  - type: textarea
+    id: capabilities
+    attributes:
+      label: Which capabilities can it support?
+      description: Map it against the documented capability matrix.
+    validations:
+      required: true

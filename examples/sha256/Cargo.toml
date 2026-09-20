@@ -1,0 +1,17 @@
+[package]
+name = "sha256-example"
+description = "Hash bytes inside the guest, commit the digest, verify it on the host."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+unified-zkvm-core = { workspace = true, features = ["std"] }
+unified-zkvm-host = { workspace = true }
+unified-zkvm-mock = { workspace = true }
+unified-zkvm-tests = { path = "../../tests" }
+serde = { workspace = true, features = ["std", "derive"] }
+postcard = { workspace = true, features = ["use-std"] }
+anyhow = { workspace = true }

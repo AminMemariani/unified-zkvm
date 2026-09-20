@@ -1,0 +1,37 @@
+name: Backend compatibility problem
+description: A backend behaves differently from the documented capability matrix.
+labels: [backend, compatibility]
+body:
+  - type: markdown
+    attributes:
+      value: Use this when a program works on one proving backend but not another.
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Which backend?
+      options:
+        - SP1
+        - RISC Zero
+        - mock (development backend)
+    validations:
+      required: true
+  - type: input
+    id: sdk-version
+    attributes:
+      label: Upstream SDK version
+      description: Version of the sp1 / risc0 SDK in use.
+    validations:
+      required: true
+  - type: textarea
+    id: divergence
+    attributes:
+      label: What differs from the documented capability matrix?
+      description: Quote the matrix entry you expected and describe the actual behaviour.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+    validations:
+      required: true
