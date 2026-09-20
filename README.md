@@ -214,11 +214,15 @@ The whole workspace tests with no zkVM installed:
 cargo test --workspace
 ```
 
-That runs 19 test binaries (~154 tests): unit tests across core, guest, host and
-mock; 15 cross-backend portability tests; 9 negative-security tests; 15
-property-based serialization tests; and 15 golden vectors that pin the exact
-wire bytes. Backend adapters live outside the default workspace and are tested
-separately — see [CONTRIBUTING.md](CONTRIBUTING.md).
+That runs 168 tests: unit tests across core, guest, host and mock; cross-backend
+portability tests against a native reference model; negative-security tests
+(tampered proofs, wrong program identity, hostile length prefixes); property-based
+serialization tests; `compile_fail` tests proving you cannot claim a proof is
+verified without verifying it; and golden vectors that pin the exact wire bytes.
+
+Backend adapters live outside the default workspace and are checked separately —
+see [CONTRIBUTING.md](CONTRIBUTING.md). Their end-to-end proving tests are
+`#[ignore]`d because they need the vendor toolchains (`sp1up`, `rzup`).
 
 ## Built with unified-zkvm
 

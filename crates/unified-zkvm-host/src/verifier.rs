@@ -75,8 +75,8 @@ impl<B: BackendAdapter> Verifier<B> {
             self.backend.capabilities(),
             Capability::Verify,
         )?;
-        self.backend.verify(proof, program)?;
-        Ok(proof.clone().into_verified())
+        let witness = self.backend.verify(proof, program)?;
+        Ok(proof.clone().into_verified(witness))
     }
 
     /// The backend performing verification.

@@ -49,8 +49,10 @@ Note the signature **requires the program**. There is deliberately no
 `verify(&proof)` that infers identity from the proof itself — that would check a
 proof against whatever program the proof claims, which is no check at all.
 
-`VerifiedPublicValues` is obtainable only through verification (internally via
-`ZkProof::into_verified()`), so the type system pushes callers through the check.
+`VerifiedPublicValues` is obtainable only through verification: `into_verified()`
+requires a `VerificationWitness`, which only a backend adapter can mint on the
+success path of its `verify()`. The compiler, not a convention, enforces it —
+see [security-model.md](security-model.md#the-type-system-as-a-guardrail).
 If you genuinely need unverified values, `PublicValues::decode_unverified` says
 so in its name.
 

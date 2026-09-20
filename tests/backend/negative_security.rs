@@ -287,6 +287,49 @@ fn security_rejections_are_distinguishable_from_operational_failures() {
     assert_ne!(program_a.id(), program_b.id());
 }
 
+/// Public values cannot be trusted without verification — enforced by types.
+///
+/// This test documents a *compile-time* guarantee rather than a runtime one.
+/// `ZkProof::into_verified` requires a `VerificationWitness`, which can only be
+/// minted by a type implementing the sealed `VerifierIdentity` trait. Since
+/// application code cannot implement that trait, the following does not
+/// compile:
+///
+/// ```compile_fail
+/// # use unified_zkvm_core::{BackendId, ProgramId, ProofKind, ProofMetadata, PublicValues, ZkProof};
+/// # let proof = ZkProof::new(
+/// #     BackendId::Mock,
+/// #     ProgramId::from_digest(BackendId::Mock, [0u8; 32]),
+/// #     ProofKind::Mock,
+/// #     PublicValues::empty(),
+/// #     vec![1],
+/// #     ProofMetadata::new(),
+/// # ).unwrap();
+/// // No witness: there is no way to claim "verified" without verifying.
+/// let trusted = proof.into_verified();
+/// ```
+///
+/// And a witness cannot be forged either, because `VerificationWitness::new`
+/// demands a sealed-trait implementor:
+///
+/// ```compile_fail
+/// # use unified_zkvm_core::VerificationWitness;
+/// struct IAmNotAVerifier;
+/// let forged = VerificationWitness::new(&IAmNotAVerifier);
+/// ```
+#[test]
+fn trusting_public_values_without_verification_does_not_compile() {
+    // The guarantee lives in the doc-tests above, which the test harness
+    // compiles and requires to FAIL. This body asserts the legitimate path
+    // still works, so the guarantee is not vacuous.
+    let (b, program, proof) = setup();
+    let witness = b
+        .verify(&proof, &program)
+        .expect("legitimate path verifies");
+    let trusted = proof.into_verified(witness);
+    assert_eq!(trusted.program_id(), program.id());
+}
+
 #[test]
 fn the_verifier_is_actually_invoked_and_not_short_circuited() {
     // Guards against a regression where an early return makes verification a

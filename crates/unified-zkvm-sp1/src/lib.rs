@@ -41,16 +41,17 @@
 #![forbid(unsafe_code)]
 #![deny(missing_docs)]
 
-use std::sync::Arc;
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
-use sp1_sdk::blocking::{Prover, ProveRequest, ProverClient};
-use sp1_sdk::{Elf, HashableKey, ProvingKey, SP1ProofWithPublicValues, SP1Stdin};
+use sp1_sdk::blocking::{ProveRequest, Prover, ProverClient};
+use sp1_sdk::{Elf, HashableKey, ProvingKey, SP1ProofWithPublicValues, SP1Stdin, SP1VerifyingKey};
 
 use unified_zkvm_core::{
     BackendAdapter, BackendId, CapabilitySet, ExecutionResult, Operation, ProgramArtifact,
     ProgramId, ProofKind, ProofMetadata, ProvingOptions, PublicValues, ResourceUsage, Stage,
-    ZkProof, ZkVmError,
+    VerificationWitness, ZkProof, ZkVmError,
 };
 
 /// The `sp1-sdk` release this adapter is written and tested against.
@@ -86,16 +87,84 @@ impl Sp1SdkError {
 /// Construction is cheap; the SP1 prover client is built per operation because
 /// the blocking client is not safe to hold across a Tokio runtime boundary (see
 /// the module docs).
-#[derive(Debug, Clone, Default)]
+/// Cloning shares the verifying-key cache, so a cloned adapter inherits any
+/// keys already derived rather than paying for them again.
+#[derive(Clone, Default)]
 pub struct Sp1Backend {
-    _private: (),
+    /// Caches verifying keys by program content digest.
+    ///
+    /// SP1 6.8.0 exposes the verifying key only through `setup()`, which does
+    /// the full proving-key derivation — expensive enough that calling it per
+    /// verification would make verifying about as costly as setting up to
+    /// prove. Since a program's key is a pure function of its ELF, caching it
+    /// is safe and restores "verification is cheap to integrate".
+    ///
+    /// Keyed on [`ProgramArtifact::content_digest`], which is domain-separated
+    /// and includes the backend, so two different programs can never collide
+    /// onto one entry.
+    vk_cache: Arc<Mutex<HashMap<[u8; 32], Arc<SP1VerifyingKey>>>>,
+}
+
+impl std::fmt::Debug for Sp1Backend {
+    /// Reports cache occupancy only.
+    ///
+    /// Verifying keys are large and are not useful in a log line, so the manual
+    /// impl deliberately omits them rather than deriving `Debug`.
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let cached = self.vk_cache.lock().map(|c| c.len()).unwrap_or(0);
+        f.debug_struct("Sp1Backend")
+            .field("cached_verifying_keys", &cached)
+            .finish_non_exhaustive()
+    }
 }
 
 impl Sp1Backend {
     /// Creates an adapter backed by SP1's local CPU prover.
     #[must_use]
     pub fn new() -> Self {
-        Self { _private: () }
+        Self {
+            vk_cache: Arc::new(Mutex::new(HashMap::new())),
+        }
+    }
+
+    /// Returns the verifying key for `program`, deriving it once and reusing it.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ZkVmError::Backend`] if SP1 cannot set up the program.
+    fn verifying_key(&self, program: &ProgramArtifact) -> Result<Arc<SP1VerifyingKey>, ZkVmError> {
+        let key = program.content_digest();
+
+        if let Some(cached) = self
+            .vk_cache
+            .lock()
+            .expect("sp1 verifying-key cache poisoned")
+            .get(&key)
+        {
+            return Ok(Arc::clone(cached));
+        }
+
+        // Derived outside the lock: `setup` is slow, and holding the mutex
+        // across it would serialise every concurrent verification.
+        let prover = ProverClient::builder().cpu().build();
+        let pk = prover.setup(elf(program.bytes())).map_err(|e| {
+            ZkVmError::backend(
+                BackendId::Sp1,
+                Operation::Verify,
+                Stage::BackendSetup,
+                Sp1SdkError::from_display(e),
+            )
+        })?;
+        let vk = Arc::new(pk.verifying_key().clone());
+
+        // A concurrent caller may have inserted meanwhile; either value is
+        // correct, since the key is a pure function of the ELF.
+        self.vk_cache
+            .lock()
+            .expect("sp1 verifying-key cache poisoned")
+            .insert(key, Arc::clone(&vk));
+
+        Ok(vk)
     }
 
     /// Derives the program artifact — including SP1's real program identity —
@@ -150,6 +219,8 @@ fn stdin_for(input: &[u8]) -> SP1Stdin {
     stdin
 }
 
+unified_zkvm_core::impl_verifier_identity!(Sp1Backend);
+
 impl BackendAdapter for Sp1Backend {
     fn backend_id(&self) -> BackendId {
         BackendId::Sp1
@@ -159,9 +230,7 @@ impl BackendAdapter for Sp1Backend {
         // Only bits this adapter implements and can exercise: no aggregation,
         // no recursion, no acceleration claims, and no on-chain proof until the
         // Groth16 path is actually wired and tested.
-        CapabilitySet::MINIMUM_VIABLE
-            | CapabilitySet::CYCLE_METRICS
-            | CapabilitySet::COMPRESSION
+        CapabilitySet::MINIMUM_VIABLE | CapabilitySet::CYCLE_METRICS | CapabilitySet::COMPRESSION
     }
 
     fn execute(
@@ -250,7 +319,11 @@ impl BackendAdapter for Sp1Backend {
         )
     }
 
-    fn verify(&self, proof: &ZkProof, program: &ProgramArtifact) -> Result<(), ZkVmError> {
+    fn verify(
+        &self,
+        proof: &ZkProof,
+        program: &ProgramArtifact,
+    ) -> Result<VerificationWitness, ZkVmError> {
         // Binding first: a cryptographically valid proof of the *wrong* program
         // must still fail, and checking that before touching the SDK keeps the
         // expensive path off the error route.
@@ -266,22 +339,19 @@ impl BackendAdapter for Sp1Backend {
                 )
             })?;
 
+        let vk = self.verifying_key(program)?;
         let prover = ProverClient::builder().cpu().build();
-        let pk = prover.setup(elf(program.bytes())).map_err(|e| {
-            ZkVmError::backend(
-                BackendId::Sp1,
-                Operation::Verify,
-                Stage::BackendSetup,
-                Sp1SdkError::from_display(e),
-            )
-        })?;
 
         prover
-            .verify(&decoded, pk.verifying_key(), None)
+            .verify(&decoded, &vk, None)
             .map_err(|e| ZkVmError::VerificationFailed {
                 backend: BackendId::Sp1,
                 detail: Some(e.to_string()),
-            })
+            })?;
+
+        // Minted only here: binding checked above, SP1's verifier accepted the
+        // proof. This is what permits the caller to read public values.
+        Ok(VerificationWitness::new(self))
     }
 
     fn backend_version(&self) -> String {

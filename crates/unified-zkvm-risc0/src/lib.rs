@@ -45,7 +45,7 @@ use risc0_zkvm::{compute_image_id, default_prover, ExecutorEnv, ProverOpts, Rece
 
 use unified_zkvm_core::{
     BackendAdapter, BackendId, CapabilitySet, ExecutionResult, Operation, ProgramArtifact,
-    ProgramId, ProofKind, ProofMetadata, ProvingOptions, PublicValues, ResourceUsage, Stage,
+    ProgramId, ProofKind, ProofMetadata, ProvingOptions, VerificationWitness, PublicValues, ResourceUsage, Stage,
     ZkProof, ZkVmError,
 };
 
@@ -160,6 +160,8 @@ fn env_for(input: &[u8], operation: Operation) -> Result<ExecutorEnv<'static>, Z
     })
 }
 
+unified_zkvm_core::impl_verifier_identity!(Risc0Backend);
+
 impl BackendAdapter for Risc0Backend {
     fn backend_id(&self) -> BackendId {
         BackendId::Risc0
@@ -258,7 +260,11 @@ impl BackendAdapter for Risc0Backend {
         )
     }
 
-    fn verify(&self, proof: &ZkProof, program: &ProgramArtifact) -> Result<(), ZkVmError> {
+    fn verify(
+        &self,
+        proof: &ZkProof,
+        program: &ProgramArtifact,
+    ) -> Result<VerificationWitness, ZkVmError> {
         // Binding first: a receipt that is cryptographically valid for another
         // guest must still be refused, and this check is far cheaper than the
         // verifier it guards.
@@ -279,7 +285,11 @@ impl BackendAdapter for Risc0Backend {
             .map_err(|e| ZkVmError::VerificationFailed {
                 backend: BackendId::Risc0,
                 detail: Some(e.to_string()),
-            })
+            })?;
+
+        // Minted only here: binding checked above, the receipt verified
+        // against the real image ID. This permits reading public values.
+        Ok(VerificationWitness::new(self))
     }
 
     fn backend_version(&self) -> String {

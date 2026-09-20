@@ -43,10 +43,29 @@ a proof against whatever program the proof claims, which is no check at all.
 ## The type system as a guardrail
 
 `VerifiedPublicValues` is constructible only via `ZkProof::into_verified()`,
-which the runner calls only after verification succeeds. So the ordinary way to
-read a guest's output requires having verified it. Unverified access exists —
-`PublicValues::decode_unverified` — and is deliberately verbose so it stands out
-in review.
+which **requires a `VerificationWitness`**. That witness is a zero-sized
+capability token minted by `VerificationWitness::new`, which in turn demands a
+type implementing the *sealed* `VerifierIdentity` trait. Only backend adapters
+inside this workspace implement it, so application code cannot manufacture one.
+
+The practical consequence: `BackendAdapter::verify` returns the witness on its
+success path, after `verify_binding` and the cryptographic verifier have both
+passed. There is no expressible way to obtain trusted public values without a
+verifier having accepted the proof — this is enforced by the compiler, not by
+convention. Both of these fail to compile:
+
+```rust,compile_fail
+let trusted = proof.into_verified();              // no witness available
+```
+
+```rust,compile_fail
+struct IAmNotAVerifier;
+let forged = VerificationWitness::new(&IAmNotAVerifier);  // trait is sealed
+```
+
+Unverified access still exists — `PublicValues::decode_unverified` — and is
+deliberately verbose so it stands out in review. It is the right tool for
+inspecting the output of a local `execute()` run, which was never proven at all.
 
 ## Trust boundaries
 

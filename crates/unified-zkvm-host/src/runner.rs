@@ -203,9 +203,9 @@ impl<B: BackendAdapter> ZkHostRunner<B> {
         program: &ProgramArtifact,
     ) -> Result<VerifiedPublicValues, ZkVmError> {
         self.require(Capability::Verify)?;
-        self.backend.verify(proof, program)?;
+        let witness = self.backend.verify(proof, program)?;
         debug!("verification passed");
-        Ok(proof.clone().into_verified())
+        Ok(proof.clone().into_verified(witness))
     }
 
     /// Proves and then verifies in one call.
