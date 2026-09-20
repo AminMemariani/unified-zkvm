@@ -10,7 +10,7 @@ use uzkvm_test_support::{fibonacci, FibonacciInput};
 /// Name of the guest; its digest is the program identity.
 pub const GUEST_NAME: &[u8] = b"proof-verification-guest";
 
-/// The guest body: decode → compute → commit.
+/// The guest body: decode -> compute -> commit.
 pub fn guest(input: &[u8]) -> Result<Vec<u8>, ZkVmError> {
     let parsed: FibonacciInput = ZkMessage::decode(input)?;
     postcard::to_allocvec(&fibonacci(parsed)).map_err(|e| ZkVmError::Serialization {

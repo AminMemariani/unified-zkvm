@@ -20,9 +20,11 @@ unified-zkvm-macros = { workspace = true, optional = true }
 unified-zkvm-mock = { workspace = true, optional = true }
 
 [features]
-# Host-side usage with the mock backend. Enough to explore the API with
-# `cargo add unified-zkvm` and no proving SDK.
-default = ["std", "host", "mock"]
+# The default is the host API and nothing else. The mock backend is
+# deliberately NOT default: it produces no cryptographic proofs, and a
+# `cargo add unified-zkvm` must never pull a fake prover into a production
+# dependency tree where someone could reach it by accident.
+default = ["std", "host"]
 
 std = ["unified-zkvm-core/std"]
 
@@ -36,6 +38,14 @@ guest = ["dep:unified-zkvm-guest"]
 macros = ["dep:unified-zkvm-macros"]
 
 # Development-only mock backend. Produces NO cryptographic proofs.
+#
+# Opt in explicitly, and prefer doing so under [dev-dependencies] so it cannot
+# reach a release build at all:
+#
+#     [dev-dependencies]
+#     unified-zkvm = { version = "0.1", features = ["mock"] }
+#
+# Enabling it emits a compile-time warning in release builds; see src/lib.rs.
 mock = ["dep:unified-zkvm-mock", "host"]
 
 # Backend adapters. Each pulls a large proving SDK, so none is default.

@@ -12,9 +12,9 @@ public values.* Three bindings must all hold, or the sentence loses its meaning:
 
 | Binding | Enforced by |
 |---|---|
-| proof ↔ backend | `ZkProof::verify_binding` - backend match |
-| proof ↔ program identity | `ZkProof::verify_binding` - program-ID match |
-| proof ↔ public values | the backend's cryptographic verifier |
+| proof <-> backend | `ZkProof::verify_binding` - backend match |
+| proof <-> program identity | `ZkProof::verify_binding` - program-ID match |
+| proof <-> public values | the backend's cryptographic verifier |
 
 ## Verification order
 
@@ -113,8 +113,8 @@ Application code that inspects proofs directly should still check
 
 ## Serialization attacks
 
-The framed message format (`magic ‖ u16 version ‖ u32 length ‖ payload`) and the
-proof container (`UZKVMPRF ‖ u16 version ‖ u16 backend ‖ u32 body len ‖ body`)
+The framed message format (`magic || u16 version || u32 length || payload`) and the
+proof container (`UZKVMPRF || u16 version || u16 backend || u32 body len || body`)
 are parsed defensively. Tested in `tests/backend/negative_security.rs`:
 
 | Attack | Defence |

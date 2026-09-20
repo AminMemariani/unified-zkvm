@@ -86,7 +86,7 @@ Why it pays:
   arithmetic is the slowest possible unit test.
 - **The reference model is the same function.** The portability harness in
   `tests/` runs the real function through the mock backend, so a passing test
-  means the plumbing (encode → transport → decode → commit → verify → decode) is
+  means the plumbing (encode -> transport -> decode -> commit -> verify -> decode) is
   lossless - not that a stub matched a stub.
 - **Portability failures get isolated.** If the pure function passes and the
   guest fails, the problem is in I/O or the backend, not your logic.
@@ -106,7 +106,7 @@ No toolchain, no proof, no backend.
 Host and guest speak canonical postcard inside a framed message:
 
 ```text
-magic 0x5A 0x4B ("ZK") ‖ u16 LE version ‖ u32 LE length ‖ payload
+magic 0x5A 0x4B ("ZK") || u16 LE version || u32 LE length || payload
 ```
 
 `ENCODING_VERSION = 1`, `MAX_MESSAGE_BYTES = 256 MiB`, little-endian throughout.

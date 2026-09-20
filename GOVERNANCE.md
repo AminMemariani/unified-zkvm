@@ -55,7 +55,7 @@ capability. Removing an inaccurate bit is always accepted and released promptly.
 
 Per [docs/adding-a-backend.md](docs/adding-a-backend.md). A new adapter needs at
 least two maintainer approvals, with one reviewing the verification path
-specifically. Status promotion (`Planned` → `Supported` → `Stable`) is a
+specifically. Status promotion (`Planned` -> `Supported` -> `Stable`) is a
 maintainer decision based on evidence: `Stable` requires end-to-end proving in
 scheduled CI plus a passing portability suite.
 

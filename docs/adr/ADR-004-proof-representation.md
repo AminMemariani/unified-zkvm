@@ -51,7 +51,7 @@ stands out in review.
 ### Container: on-disk format
 
 ```text
-UZKVMPRF ‖ u16 version ‖ u16 backend ‖ u32 body len ‖ postcard body
+UZKVMPRF || u16 version || u16 backend || u32 body len || postcard body
 ```
 
 `PROOF_CONTAINER_VERSION = 1`, `CONTAINER_HEADER_LEN = 16`,

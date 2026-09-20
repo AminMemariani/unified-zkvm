@@ -2,7 +2,7 @@
 
 **Write your zkVM application once. Choose the proving backend later.**
 
-`SP1 · RISC Zero · Mock`
+**Backends: SP1 | RISC Zero**
 
 [![CI](https://github.com/AminMemariani/unified-zkvm/actions/workflows/ci.yml/badge.svg)](https://github.com/AminMemariani/unified-zkvm/actions/workflows/ci.yml)
 [![crates.io](https://img.shields.io/crates/v/unified-zkvm.svg)](https://crates.io/crates/unified-zkvm)
@@ -14,7 +14,7 @@ A portable Rust abstraction over zkVM proving systems. Your guest program reads
 inputs and commits public values through one API; your host proves and verifies
 through one API. The backend becomes a dependency choice instead of a rewrite.
 
-> **Status:** pre-1.0. The mock backend is stable. The SP1 and RISC Zero
+> **Status:** pre-1.0. The SP1 and RISC Zero
 > adapters compile against their pinned SDKs and their unit tests pass, but
 > end-to-end proving requires the vendor toolchain and is exercised by
 > `#[ignore]`d tests and scheduled CI - not by `cargo test --workspace`. See
@@ -139,9 +139,10 @@ Full matrix, pinned versions and prerequisites:
 unified-zkvm = "0.1"
 ```
 
-The default features give you the host API and the mock backend, so the crate is
-usable with no proving SDK installed. Backend adapters are separate crates, so
-you only pay for the multi-hundred-crate proving SDK you actually use:
+The default features give you the host API and nothing else. **No backend is
+enabled by default**, including the mock one: it produces no cryptographic
+proofs, so it must never arrive in a dependency tree unasked. Pick a real
+backend explicitly, and you only pay for the proving SDK you actually use:
 
 ```toml
 unified-zkvm-sp1 = "0.1"     # requires `protoc` on the host
@@ -154,7 +155,7 @@ unified-zkvm-risc0 = "0.1"   # on macOS may need RISC0_SKIP_BUILD_KERNELS=1
 |---|---|---|
 | `std` | yes | `std::error::Error` impls, filesystem proof save/load |
 | `host` | yes | `ZkHostRunner`, `Verifier`, proving and verification |
-| `mock` | yes | development backend (implies `host`) |
+| `mock` | **no** | development backend, **no real proofs**; prefer `[dev-dependencies]` |
 | `guest` | no | `zk_read` / `zk_commit` / `sha256`; enable inside a guest crate |
 | `macros` | no | the `#[entrypoint]` attribute |
 | `sp1` | no | selects the SP1 guest runtime |

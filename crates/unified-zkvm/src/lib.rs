@@ -12,13 +12,13 @@
 //!                    └──────────┬──────────┘
 //!                     unified-zkvm API
 //!                    ┌──────────┴──────────┐
-//!                    │  Guest I/O · Host   │
-//!                    │  Proofs · Crypto    │
+//!                    │  Guest I/O | Host   │
+//!                    │  Proofs | Crypto    │
 //!                    │     Capabilities    │
 //!                    └──────────┬──────────┘
 //!             ┌─────────────────┼─────────────────┐
 //!             ▼                 ▼                 ▼
-//!          SP1 adapter    RISC Zero adapter   Mock backend
+//!          SP1 adapter    RISC Zero adapter   (dev: mock)
 //! ```
 //!
 //! # Quick start
@@ -39,34 +39,42 @@
 //!
 //! Host:
 //!
-//! ```
+//! ```ignore
+//! // Requires a backend adapter, e.g. `unified-zkvm-sp1` or
+//! // `unified-zkvm-risc0`. Swapping the two lines that name the backend is
+//! // the entire migration between them.
 //! use unified_zkvm::host::ZkHostRunner;
-//! # use unified_zkvm::mock::MockBackend;
-//! # fn demo() -> Result<(), unified_zkvm::ZkVmError> {
-//! # let backend = MockBackend::new();
-//! # let program = backend.build_program(b"guest-elf")?;
+//! use unified_zkvm_sp1::Sp1Backend;
+//!
+//! let backend = Sp1Backend::new();
+//! let program = backend.build_program(GUEST_ELF)?;
 //! let runner = ZkHostRunner::new(backend);
 //!
 //! let proof = runner.prove(&program, &7u32)?;
+//!
+//! // Public values are readable only after verification succeeds.
 //! let verified = runner.verify(&proof, &program)?;
-//! # Ok(())
-//! # }
+//! let output: u64 = verified.decode()?;
 //! ```
 //!
 //! # Feature flags
 //!
 //! | Feature | Enables | Default |
 //! |---|---|---|
-//! | `std` | Standard library support | ✅ |
-//! | `host` | [`host`] - proving and verification | ✅ |
+//! | `std` | Standard library support | yes |
+//! | `host` | [`host`] - proving and verification | yes |
 //! | `guest` | the guest I/O module - `zk_read` / `zk_commit` | - |
 //! | `macros` | `#[entrypoint]` | - |
-//! | `mock` | [`mock`] - development backend, **no real proofs** | ✅ |
+//! | `mock` | the `mock` module - development backend, **no real proofs** | - |
 //! | `sp1` | SP1 guest runtime | - |
 //! | `risc0` | RISC Zero guest runtime | - |
 //!
-//! Backend features are never default: each pulls a proving SDK of several
-//! hundred crates, and most builds need at most one.
+//! **No backend is enabled by default.** A real backend costs a proving SDK of
+//! several hundred crates, and most builds need at most one. The `mock` backend
+//! is not default either, for a different and more important reason: it
+//! produces no cryptographic proofs, so it must never arrive in a dependency
+//! tree unasked. Enable it explicitly, and prefer `[dev-dependencies]` so it
+//! cannot reach a release build.
 //!
 //! # What "portable" does and does not mean
 //!
@@ -112,13 +120,37 @@ pub use unified_zkvm_guest as guest;
 /// The host API: [`ZkHostRunner`](host::ZkHostRunner) and friends.
 pub use unified_zkvm_host as host;
 
-#[cfg(feature = "mock")]
-#[cfg_attr(docsrs, doc(cfg(feature = "mock")))]
+// A mock prover reaching a release binary is a security problem, not a style
+// preference: `MockBackend` "verifies" a keyless checksum anyone can forge. The
+// feature is opt-in, but opting in and then shipping it is the mistake worth
+// catching, so say so loudly at compile time when optimisations are on.
+//
+// This is a warning rather than a hard `compile_error!` because integration
+// tests, benchmarks and examples are legitimately built in release mode. It is
+// deliberately hard to miss and trivial to silence correctly: move the
+// dependency to `[dev-dependencies]`.
 /// The development mock backend.
 ///
 /// # Security
 ///
-/// Produces **no cryptographic proofs**. See [`mock::MockBackend`].
+/// Produces **no cryptographic proofs**. Its verifier recomputes a keyless
+/// checksum that anyone can forge, so it attests to nothing. See
+/// [`mock::MockBackend`].
+///
+/// # Keeping it out of production
+///
+/// The `mock` feature is **not** enabled by default, so a plain
+/// `cargo add unified-zkvm` can never reach this module. That is the guarantee,
+/// and it is enforced by a test rather than by documentation.
+///
+/// When you do want it, declare it where it cannot reach a release binary:
+///
+/// ```toml
+/// [dev-dependencies]
+/// unified-zkvm = { version = "0.1", features = ["mock"] }
+/// ```
+#[cfg(feature = "mock")]
+#[cfg_attr(docsrs, doc(cfg(feature = "mock")))]
 pub use unified_zkvm_mock as mock;
 
 #[cfg(feature = "macros")]
@@ -134,22 +166,27 @@ pub use unified_zkvm_macros::entrypoint;
 /// ```
 /// let available = unified_zkvm::available_backends();
 ///
-/// // The default feature set includes the mock backend.
-/// assert!(available.contains(&unified_zkvm::BackendId::Mock));
+/// // Empty on a default build: no backend ships enabled, because every
+/// // real backend costs a proving SDK and the mock one is not a prover.
+/// for backend in &available {
+///     assert!(backend.is_cryptographic() || cfg!(feature = "mock"));
+/// }
 /// ```
 #[must_use]
-// Each push is `#[cfg]`-gated, so the `vec![]` form clippy suggests is not
-// expressible here without duplicating the whole literal per feature
-// combination.
-#[allow(clippy::vec_init_then_push)]
+// Every push is `#[cfg]`-gated, so on a default build (no backend features)
+// the vector is never mutated and `mut` looks redundant. Suppressing both lints
+// is cheaper than duplicating the body across every feature combination.
+#[allow(clippy::vec_init_then_push, unused_mut)]
 pub fn available_backends() -> Vec<BackendId> {
     let mut out = Vec::new();
 
+    // Not default: the mock backend produces no cryptographic proofs, so it is
+    // only ever listed when someone asked for it by name.
     #[cfg(feature = "mock")]
     out.push(BackendId::Mock);
 
-    // Adapter crates live outside the default workspace because they require
-    // vendor toolchains; when built with their feature they register here.
+    // Each adapter is a separate crate so that enabling one never compiles the
+    // other's proving SDK; they register here when their feature is on.
     #[cfg(feature = "sp1")]
     out.push(BackendId::Sp1);
 
@@ -163,18 +200,31 @@ pub fn available_backends() -> Vec<BackendId> {
 mod tests {
     use super::*;
 
+    /// A plain `cargo add unified-zkvm` must not hand anyone a fake prover.
+    ///
+    /// This is the test that keeps the "no mock in production" guarantee
+    /// honest: if someone adds `mock` back to the default feature set, this
+    /// fails rather than quietly shipping a forgeable verifier to every user.
     #[test]
-    fn the_default_build_exposes_a_usable_backend() {
+    fn a_default_build_ships_no_non_cryptographic_backend() {
+        #[cfg(not(feature = "mock"))]
         assert!(
-            !available_backends().is_empty(),
-            "a default `cargo add unified-zkvm` must be explorable without an SDK"
+            !available_backends().contains(&BackendId::Mock),
+            "the mock backend must never be reachable without its explicit feature"
         );
+
+        for backend in available_backends() {
+            assert!(
+                backend.is_cryptographic() || cfg!(feature = "mock"),
+                "{backend} is not cryptographic and was enabled without the `mock` feature"
+            );
+        }
     }
 
     #[test]
     fn availability_reflects_features_not_wishful_thinking() {
         let available = available_backends();
-        // sp1/risc0 are not default features, so they must be absent here.
+        // No adapter exists for these, so they must never be advertised.
         assert!(!available.contains(&BackendId::Jolt));
         assert!(!available.contains(&BackendId::Pico));
     }

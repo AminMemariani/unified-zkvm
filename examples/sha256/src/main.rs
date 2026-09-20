@@ -71,7 +71,7 @@ fn main() -> Result<()> {
         bail!("guest digest disagreed with the host-side sha256 - this is a bug");
     }
 
-    println!("  verified ✓");
+    println!("  verified yes");
     println!("  committed digest : {}", hex32(&output.digest));
     println!("  host sha256      : {}", hex32(&host_digest));
     println!("  committed length : {}", output.len);

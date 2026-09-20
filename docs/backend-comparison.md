@@ -59,7 +59,7 @@ the binding check meaningless. See
 | Host build prerequisite | `protoc` | Metal Toolchain or `RISC0_SKIP_BUILD_KERNELS=1` (macOS) |
 | Non-default feature required | `blocking` | `prove` - else `default_prover()` panics at runtime |
 | Remote-proving risk | - | `bonsai` can route proving remotely from env vars; disabled via `default-features = false` |
-| Input framing used here | `SP1Stdin::write_slice` ↔ guest `read_vec()` | receipt/env API |
+| Input framing used here | `SP1Stdin::write_slice` <-> guest `read_vec()` | receipt/env API |
 | Proof serialization here | bincode | bincode |
 
 ## Aggregation ingredients

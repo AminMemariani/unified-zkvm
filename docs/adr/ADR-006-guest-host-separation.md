@@ -51,8 +51,8 @@ multi-minute ordeal. Teams respond by not testing.
 - Guest logic is unit-testable with no zkVM, no toolchain and no proof. This is
   the single biggest developer-experience win in the project.
 - The portability harness runs the *real* guest function through the mock
-  backend, so a passing test means the whole encode → transport → decode →
-  commit → verify → decode path is lossless - not that two stubs agreed.
+  backend, so a passing test means the whole encode -> transport -> decode ->
+  commit -> verify -> decode path is lossless - not that two stubs agreed.
 - Host machinery cannot accidentally enter a guest build; it is not reachable.
 - Guests stay small, and small guests prove faster.
 - One shared core means a proof means the same thing on both sides.

@@ -1,4 +1,4 @@
-//! # ⚠️ DEVELOPMENT ONLY - THIS BACKEND PRODUCES NO PROOFS ⚠️
+//! # WARNING: DEVELOPMENT ONLY - THIS BACKEND PRODUCES NO PROOFS WARNING:
 //!
 //! [`MockBackend`] exists so that API wiring, serialization, capability gating
 //! and error handling can be tested in milliseconds, without a proving SDK or a

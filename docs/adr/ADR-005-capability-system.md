@@ -107,5 +107,5 @@ verbose serialized form.
 construction, but proving is expensive, some probes have side effects, and
 capability information is needed *before* the work starts.
 
-**Version-based inference** ("SDK ≥ 6.0 means X"). Fragile, and it encodes
+**Version-based inference** ("SDK >= 6.0 means X"). Fragile, and it encodes
 upstream's claims rather than this project's tested reality.

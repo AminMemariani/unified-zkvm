@@ -28,13 +28,13 @@ These describe **this project's adapter**, not upstream's own maturity.
 | Execute | yes | yes | yes | - | - | - |
 | Prove | yes (**not a proof**) | yes | yes | - | - | - |
 | Verify | yes (digest recompute) | yes | yes | - | - | - |
-| `GUEST_IO` | ✓ | ✓ | ✓ | - | - | - |
-| `PUBLIC_VALUES` | ✓ | ✓ | ✓ | - | - | - |
-| `EXECUTE` | ✓ | ✓ | ✓ | - | - | - |
-| `PROVE` | ✓ | ✓ | ✓ | - | - | - |
-| `VERIFY` | ✓ | ✓ | ✓ | - | - | - |
-| `CYCLE_METRICS` | ✓ | ✓ | ✓ | - | - | - |
-| `COMPRESSION` | - | ✓ | ✓ | - | - | - |
+| `GUEST_IO` | yes | yes | yes | - | - | - |
+| `PUBLIC_VALUES` | yes | yes | yes | - | - | - |
+| `EXECUTE` | yes | yes | yes | - | - | - |
+| `PROVE` | yes | yes | yes | - | - | - |
+| `VERIFY` | yes | yes | yes | - | - | - |
+| `CYCLE_METRICS` | yes | yes | yes | - | - | - |
+| `COMPRESSION` | - | yes | yes | - | - | - |
 | `AGGREGATION` | - | - | - | - | - | - |
 | `RECURSION` | - | - | - | - | - | - |
 | `ONCHAIN_PROOF` | - | - | - | - | - | - |

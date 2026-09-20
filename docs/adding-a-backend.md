@@ -140,7 +140,7 @@ because that is what makes guest logic testable without a toolchain.
 | capabilities claim only what is implemented (incl. negative asserts) | adapter crate | yes |
 | `build_program` derives the verifier-bound identity | adapter crate | yes |
 | binding rejects a foreign backend and a wrong program | adapter crate | yes |
-| end-to-end prove → verify | adapter crate, `#[ignore]`d | yes |
+| end-to-end prove -> verify | adapter crate, `#[ignore]`d | yes |
 | portability differential vs the reference model | `tests/portability/` | yes |
 | golden vectors if any wire format changed | `tests/vectors/` | if applicable |
 
@@ -164,8 +164,8 @@ A PR adding a backend is incomplete without:
 
 ## Step 7 - promote the status honestly
 
-`Planned` → `Supported` when the adapter compiles against a pinned SDK and unit
-tests pass. `Supported` → `Stable` only when end-to-end proving runs in CI on a
+`Planned` -> `Supported` when the adapter compiles against a pinned SDK and unit
+tests pass. `Supported` -> `Stable` only when end-to-end proving runs in CI on a
 schedule and the portability suite passes against it. Do not skip a step; the
 status field is the first thing a user reads.
 

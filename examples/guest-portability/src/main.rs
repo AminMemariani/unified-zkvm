@@ -17,7 +17,7 @@
 //!
 //! # Honesty rule
 //!
-//! Only a backend that **actually ran and matched** gets a `✓`. Backends whose
+//! Only a backend that **actually ran and matched** gets a `yes`. Backends whose
 //! adapter is not compiled into this build print `-` and the reason. A report
 //! that green-checks a backend that never executed is worse than no report.
 //!
@@ -38,7 +38,7 @@ fn compute(input: FibonacciInput) -> FibonacciOutput {
     fibonacci(input)
 }
 
-/// The thin guest wrapper: decode → [`compute`] → commit. Identical in shape
+/// The thin guest wrapper: decode -> [`compute`] -> commit. Identical in shape
 /// for every backend, which is why the wrapper can be shared too.
 fn guest(input: &[u8]) -> Result<Vec<u8>, ZkVmError> {
     let parsed: FibonacciInput = ZkMessage::decode(input)?;
@@ -143,7 +143,7 @@ fn main() -> Result<()> {
                 println!(
                     "  {:<12} {:<4} {:<16} {}",
                     row.backend,
-                    if agrees { "✓" } else { "✗" },
+                    if agrees { "yes" } else { "no" },
                     out.value,
                     row.note
                 );

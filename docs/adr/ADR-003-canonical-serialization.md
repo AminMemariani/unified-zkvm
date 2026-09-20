@@ -21,7 +21,7 @@ versions, because **a deployed guest ELF cannot be renegotiated**.
 Use **postcard** for the payload, inside our own frame:
 
 ```text
-magic 0x5A 0x4B ("ZK") ‖ u16 LE version ‖ u32 LE length ‖ payload
+magic 0x5A 0x4B ("ZK") || u16 LE version || u32 LE length || payload
 ```
 
 - `ENCODING_VERSION = 1`

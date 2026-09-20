@@ -6,7 +6,7 @@ disk are part of the public interface.
 
 ## Pre-1.0
 
-While `0.x`, breaking changes may land in a minor release (`0.1 → 0.2`), as
+While `0.x`, breaking changes may land in a minor release (`0.1 -> 0.2`), as
 cargo's `0.x` semantics already imply. Every breaking change is still listed in
 [../CHANGELOG.md](../CHANGELOG.md) with a migration note.
 
@@ -15,7 +15,7 @@ cargo's `0.x` semantics already imply. Every breaking change is still listed in
 ### 1. Canonical encoding
 
 `ENCODING_VERSION` (currently `1`), the frame layout
-(`magic ‖ u16 version ‖ u32 length ‖ payload`), the magic bytes
+(`magic || u16 version || u32 length || payload`), the magic bytes
 `0x5A 0x4B`, little-endian ordering, and the postcard payload encoding.
 
 Any change to the bytes a guest reads or commits is breaking, **even if every
@@ -26,7 +26,7 @@ golden-vector failure is a semver signal, not a flaky test.
 ### 2. Proof container format
 
 `PROOF_CONTAINER_VERSION` (currently `1`), the magic `UZKVMPRF`, and the header
-layout (`magic ‖ u16 version ‖ u16 backend ‖ u32 body len ‖ body`). Stored
+layout (`magic || u16 version || u16 backend || u32 body len || body`). Stored
 proofs must keep loading, or the version must be bumped and old versions
 explicitly handled.
 
@@ -70,7 +70,7 @@ narrowing trait bounds, adding required trait methods.
   `ONCHAIN_PROOF` to appear.
 - Changing proof *size* or *proving time*. Performance is explicitly not part of
   the contract.
-- Changing adapter status from `Planned` → `Supported` → `Stable`.
+- Changing adapter status from `Planned` -> `Supported` -> `Stable`.
 
 ## SDK version bumps
 

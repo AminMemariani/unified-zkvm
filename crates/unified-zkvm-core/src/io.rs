@@ -20,7 +20,7 @@
 //!         │  postcard (canonical, deterministic)
 //!         ▼
 //!    ZkMessage { version, payload }
-//!         │  framed: magic ‖ version ‖ len ‖ payload
+//!         │  framed: magic || version || len || payload
 //!         ▼
 //!    opaque bytes ──► SP1 stdin / RISC Zero env / OpenVM StdIn
 //! ```

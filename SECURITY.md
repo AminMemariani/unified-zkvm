@@ -5,7 +5,7 @@
 **Please report privately first. Do not open a public issue.**
 
 Use GitHub's private vulnerability reporting on this repository
-(Security → Report a vulnerability), which creates a confidential advisory
+(Security -> Report a vulnerability), which creates a confidential advisory
 visible only to maintainers.
 
 Include what you have: affected crate and version, the component

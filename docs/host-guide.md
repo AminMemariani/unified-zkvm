@@ -135,7 +135,7 @@ let bytes = container::to_bytes(&proof)?;
 let proof = container::from_bytes(&bytes)?;
 ```
 
-Container layout: `UZKVMPRF` ‖ u16 version ‖ u16 backend ‖ u32 body len ‖
+Container layout: `UZKVMPRF` || u16 version || u16 backend || u32 body len ||
 postcard body. Version 1. `read_header` inspects a header without decoding the
 body, so a hostile length prefix is refused before anything is allocated.
 

@@ -49,7 +49,7 @@ fn main() -> Result<()> {
     let verified = runner.verify(&proof, &artifact)?;
     let output: FibonacciOutput = verified.decode()?;
 
-    println!("  verified ✓");
+    println!("  verified yes");
     println!("  fib({}) = {}", output.n, output.value);
     println!();
     println!("  this process never computed a Fibonacci number; it only");

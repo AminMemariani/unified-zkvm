@@ -123,10 +123,10 @@ fn portability_test() -> Result<()> {
             Outcome::Ran(value) => {
                 ran += 1;
                 if *value == expected {
-                    println!("  {name:<10} ✓  fib({N}) = {value}");
+                    println!("  {name:<10} yes  fib({N}) = {value}");
                 } else {
                     mismatched.push(*name);
-                    println!("  {name:<10} ✗  fib({N}) = {value}  (expected {expected})");
+                    println!("  {name:<10} no  fib({N}) = {value}  (expected {expected})");
                 }
             }
             Outcome::Absent(reason) => println!("  {name:<10} -  {reason}"),

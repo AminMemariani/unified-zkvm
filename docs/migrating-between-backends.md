@@ -98,10 +98,10 @@ migration cost is then the size of that module, and you can see it.
 
 ## Migrating to or from the mock backend
 
-Mock → real is the easy direction and the normal development flow: same API,
+Mock -> real is the easy direction and the normal development flow: same API,
 plus a real toolchain and real proving time.
 
-Real → mock is for tests only. **Mock proofs are not proofs.** Never let a mock
+Real -> mock is for tests only. **Mock proofs are not proofs.** Never let a mock
 artifact into a path that makes a trust decision; three guards prevent it
 reaching a real verifier, but application code that inspects proofs directly
 should check `BackendId::is_cryptographic()` itself.

@@ -44,7 +44,7 @@ use uzkvm_test_support::{
 /// Builds a mock backend running the real Fibonacci reference implementation.
 ///
 /// The mock executes the *same function* the reference test calls, so a match
-/// confirms the plumbing (encode → transport → decode → commit → verify →
+/// confirms the plumbing (encode -> transport -> decode -> commit -> verify ->
 /// decode) is lossless, which is precisely what the abstraction must guarantee.
 fn fibonacci_backend() -> MockBackend {
     MockBackend::new().with_guest(|input| {
