@@ -17,7 +17,7 @@ categories.workspace = true
 # crate rather than the registry copy.
 unified-zkvm-core = { workspace = true, features = ["std"] }
 sp1-sdk = { version = "6.8.0", features = ["blocking"] }
-bincode = "1.3.3"
+bincode = "3.0.0"
 
 [package.metadata.docs.rs]
 # docs.rs cannot build the SP1 SDK: its build scripts require `protoc`, which is
